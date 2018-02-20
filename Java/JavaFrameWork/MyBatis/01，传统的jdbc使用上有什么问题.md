@@ -2,67 +2,67 @@
 
 ## 传统的jdbc操作数据库代码
 ```java
-    Connection connection = null;
+   	Connection connection = null;
 		
-		//预编译的statement  好处：用过一次的sql语句会存在内存中，下次使用时，可以直接使用，不需要在编译了
-		
-		PreparedStatement preparedStatement = null;
-		//结果集
-		ResultSet resultSet = null;
-		
-		try {
-			//加载数据库驱动
-			Class.forName("com.mysql.jdbc.Driver");
-			connection =  DriverManager.getConnection("jdbc:mysql://localhost:3306/javastudy?characterEncoding=utf-8", "root", "123456");
-			
-			//定义sql语句 ?表示占位符
-			String sql = "select * from user where username = ?";
-			//获取预处理statement
-			preparedStatement = connection.prepareStatement(sql);
-			//设置参数，第一个参数为sql语句中参数的序号（从1开始），第二个参数为设置的参数值
-			preparedStatement.setString(1, "王五");
-			
-			//向数据库发出sql执行查询，查询出结果集
-			resultSet =  preparedStatement.executeQuery();
-			
-			//遍历查询结果集
-			while(resultSet.next()){
-				System.out.println(resultSet.getString("id")+"  "+resultSet.getString("username"));
-			}
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			
-			//释放资源
-			if(resultSet!=null){
-				try {
-					resultSet.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			if(preparedStatement!=null){
-				try {
-					preparedStatement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+	//预编译的statement  好处：用过一次的sql语句会存在内存中，下次使用时，可以直接使用，不需要在编译了
 
-			if(connection!=null){
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+	PreparedStatement preparedStatement = null;
+	//结果集
+	ResultSet resultSet = null;
 
+	try {
+		//加载数据库驱动
+		Class.forName("com.mysql.jdbc.Driver");
+		connection =  DriverManager.getConnection("jdbc:mysql://localhost:3306/javastudy?characterEncoding=utf-8", "root", "123456");
+
+		//定义sql语句 ?表示占位符
+		String sql = "select * from user where username = ?";
+		//获取预处理statement
+		preparedStatement = connection.prepareStatement(sql);
+		//设置参数，第一个参数为sql语句中参数的序号（从1开始），第二个参数为设置的参数值
+		preparedStatement.setString(1, "王五");
+
+		//向数据库发出sql执行查询，查询出结果集
+		resultSet =  preparedStatement.executeQuery();
+
+		//遍历查询结果集
+		while(resultSet.next()){
+			System.out.println(resultSet.getString("id")+"  "+resultSet.getString("username"));
 		}
+
+	}catch(Exception e){
+		e.printStackTrace();
+	}finally{
+
+		//释放资源
+		if(resultSet!=null){
+			try {
+				resultSet.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if(preparedStatement!=null){
+			try {
+				preparedStatement.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if(connection!=null){
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+	}
 	}
 ```
 
@@ -95,7 +95,7 @@ if(connection!=null){
 
 ```java
   //定义sql语句 ?表示占位符
-	String sql = "select * from user where username = ?";
+  String sql = "select * from user where username = ?";
 ```
 
 
