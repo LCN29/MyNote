@@ -35,9 +35,11 @@
  
  ### typeAliases(别名)
  在mapper.xml中，parameterType,resultType都需要我们知道相对应的类型，但是这些类型有的会很长，所以可以给这些类型起个别名，将parameterType或者resultType的类型指定为别名。
+ 
  **官方内置好的别名**
+ 
  别名  |  映射类型
- - | :-:
+ | - | :-: |
 _byte|byte 
 _long|long 
 _short|short 
