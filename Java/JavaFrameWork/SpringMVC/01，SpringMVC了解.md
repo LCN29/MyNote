@@ -1,7 +1,7 @@
 # 01,SpringMVC了解
 
 ## 架构图
-![ALt "SpringMVC"](https://s1.ax1x.com/2018/01/03/pCZRpR.png '悬浮的提示')
+![ALt "SpringMVC"](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaFrameWork/springMVC-process.png?raw=true '悬浮的提示')
 
 ## 流程
 > 1. 用户发送请求至前端控制器DispatcherServlet
