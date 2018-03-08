@@ -254,10 +254,12 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 > 7. 很多系统(Android, Microsoft,甚至浏览器)会把一些顶级CA（也叫Root CA，即根CA）的证书默认集成到系统里。`用来表明自己对这份证书和他签发的证书信任`
 
 ###### 个人认为的证书链的情况是这样的:
-> 1. 一份证书的内容有
->> 1.1 发布这份证书的机构的信息
->> 1.2 机构的公钥
->> 1.3 签名(用上一级的机构发布的私钥进行签名的内容,顶级机构除外，其本身是用自己的私钥进行签名的)
+> 1. 一份证书的内容有 
+>> 1.1 发布这份证书的机构的信息 
+
+>> 1.2 机构的公钥 
+
+>> 1.3 签名(用上一级的机构发布的私钥进行签名的内容,顶级机构除外，其本身是用自己的私钥进行签名的) 
 
 `现在的情况是这样的：`
 > 1.一级机构去顶级机构认证，顶级结构确定可以，发了一份私钥给一级机构，后面二级机构向一级机构认证，也通过，等到了一级机构的私钥，后面的三级机构也一样。（顶级---一级---二级---三级）
@@ -266,14 +268,182 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 
 > 3.客户获取到了这份证书了，但是他不打算直接信任这份证书，想要验证一下。验证就是验证签名。而签名用的是私钥加密，需要有公钥，然后他就去下载二级机构的证书，因为里面有他的公钥，但是现在又回来了，我不信任这份二级机构的证书，我要验证一下，于是我又下载了一级机构的证书，以此类推，最后终于到了顶级机构了，他的证书（也就是根证书）我要信任的，于是我直接用顶级机构的证书里面的公钥，验证了一级机构的签名，对了，那么用一级机构的证书验证二级的，以此类推，到了三级机构的证书，用二级的验证成功，三级机构的证书验证成功，最后我可以从机构的信息里面获取想要的内容了。（为什么用公钥解密出了私钥的内容（签名）就是成功了，后面再说）
 
->4. 那么为什么系统要把一些根证书集成到系统内部呢？简单一点，就是不是所有的根证书我的信任，在我系统内的根证书，才是我选择信任的。为什么：因为根证书的生成可以自签的，你都可以生成一份根证书。顶级CA的产生很大程度是信任度产生的。受到了别人的信任，你也可以成为顶级CA，自签的证书，也就有了保证。所以系统为了安全，把那些受信任的机构发布的证书，集成到自己的系统内，过滤到那些自签又没有信任度的根证书。
+> 4.那么为什么系统要把一些根证书集成到系统内部呢？简单一点，就是不是所有的根证书我的信任，在我系统内的根证书，才是我选择信任的。为什么：因为根证书的生成可以自签的，你都可以生成一份根证书。顶级CA的产生很大程度是信任度产生的。受到了别人的信任，你也可以成为顶级CA，自签的证书，也就有了保证。所以系统为了安全，把那些受信任的机构发布的证书，集成到自己的系统内，过滤到那些自签又没有信任度的根证书。
 
 ###### 证书类型
+
+`一份证书的内容`
+```xml
+-----BEGIN CERTIFICATE-----
+
+MIID5TCCAs2gAwIBAgIEOeSXnjANBgkqhkiG9w0BAQUFADCBgjELMAkGA1UEBhMC
+
+VVMxFDASBgNVBAoTC1dlbGxzIEZhcmdvMSwwKgYDVQQLEyNXZWxscyBGYXJnbyBD
+
+ZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTEvMC0GA1UEAxMmV2VsbHMgRmFyZ28gUm9v
+
+dCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkwHhcNMDAxMDExMTY0MTI4WhcNMjEwMTE0
+
+MTY0MTI4WjCBgjELMAkGA1UEBhMCVVMxFDASBgNVBAoTC1dlbGxzIEZhcmdvMSww
+
+KgYDVQQLEyNXZWxscyBGYXJnbyBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTEvMC0G
+
+A1UEAxMmV2VsbHMgRmFyZ28gUm9vdCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkwggEi
+
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDVqDM7Jvk0/82bfuUER84A4n13
+
+5zHCLielTWi5MbqNQ1mXx3Oqfz1cQJ4F5aHiidlMuD+b+Qy0yGIZLEWukR5zcUHE
+
+SxP9cMIlrCL1dQu3U+SlK93OvRw6esP3E48mVJwWa2uv+9iWsWCaSOAlIiR5NM4O
+
+JgALTqv9i86C1y8IcGjBqAr5dE8Hq6T54oN+J3N0Prj5OEL8pahbSCOz6+MlsoCu
+
+ltQKnMJ4msZoGK43YjdeUXWoWGPAUe5AeH6orxqg4bB4nVCMe+ez/I4jsNtlAHCE
+
+AQgAFG5Uhpq6zPk3EPbg3oQtnaSFN9OH4xXQwReQfhkhahKpdv0SAulPIV4XAgMB
+
+AAGjYTBfMA8GA1UdEwEB/wQFMAMBAf8wTAYDVR0gBEUwQzBBBgtghkgBhvt7hwcB
+
+CzAyMDAGCCsGAQUFBwIBFiRodHRwOi8vd3d3LndlbGxzZmFyZ28uY29tL2NlcnRw
+
+b2xpY3kwDQYJKoZIhvcNAQEFBQADggEBANIn3ZwKdyu7IvICtUpKkfnRLb7kuxpo
+
+7w6kAOnu5+/u9vnldKTC2FJYxHT7zmu1Oyl5GFrvm+0fazbuSCUlFLZWohDo7qd/
+
+0D+j0MNdJu4HzMPBJCGHHt8qElNvQRbn7a6U+oxy+hNH8Dx+rn0ROhPs7fpvcmR7
+
+nX1/Jv16+yWt6j4pf0zjAFcysLPp7VMX2YuyFA4w6OXVE8Zkr8QA1dhYJPz1j+zx
+
+x32l2w8n0cbyQIjmH/ZhqPRCyLk306m+LFZ4wnKbWV01QIroTmMatukgalHizqSQ
+
+33ZwmVxwQ023tqcZZE6St8WRPH9IFmV7Fv3L/PvZ1dZPIWU7Sn9Ho/s=
+
+-----END CERTIFICATE-----
+
+// 明文内容
+Data:
+
+  Version: 3 (0x2)
+
+  Serial Number:971282334 (0x39e4979e)
+
+  Signature Algorithm: sha1WithRSAEncryption
+
+  Issuer: C=US, O=Wells Fargo, OU=Wells Fargo CertificationAuthority, CN=Wells Fargo Root Certificate Authority
+
+  Validity
+
+    Not Before: Oct11 16:41:28 2000 GMT
+
+    Not After : Jan14 16:41:28 2021 GMT
+
+  Subject: C=US, O=Wells Fargo, OU=Wells Fargo CertificationAuthority, CN=Wells Fargo Root Certificate Authority
+
+  Subject Public Key Info:    #Public Key的KeySpec表达式
+
+    Public Key Algorithm: rsaEncryption  #PublicKey的算法
+
+    Public-Key: (2048 bit)
+
+    Modulus:
+
+       00:d5:a8:33:3b:26:f9:34:ff:cd:9b:7e:e5:04:47:
+
+       ce:00:e2:7d:77:e7:31:c2:2e:27:a5:4d:68:b9:31:
+
+       ba:8d:43:59:97:c7:73:aa:7f:3d:5c:40:9e:05:e5:
+
+        a1:e2:89:d9:4c:b8:3f:9b:f9:0c:b4:c8:62:19:2c:
+
+       45:ae:91:1e:73:71:41:c4:4b:13:fd:70:c2:25:ac:
+
+       22:f5:75:0b:b7:53:e4:a5:2b:dd:ce:bd:1c:3a:7a:
+
+       c3:f7:13:8f:26:54:9c:16:6b:6b:af:fb:d8:96:b1:
+
+       60:9a:48:e0:25:22:24:79:34:ce:0e:26:00:0b:4e:
+
+       ab:fd:8b:ce:82:d7:2f:08:70:68:c1:a8:0a:f9:74:
+
+       4f:07:ab:a4:f9:e2:83:7e:27:73:74:3e:b8:f9:38:
+
+       42:fc:a5:a8:5b:48:23:b3:eb:e3:25:b2:80:ae:96:
+
+       d4:0a:9c:c2:78:9a:c6:68:18:ae:37:62:37:5e:51:
+
+       75:a8:58:63:c0:51:ee:40:78:7e:a8:af:1a:a0:e1:
+
+       b0:78:9d:50:8c:7b:e7:b3:fc:8e:23:b0:db:65:00:
+
+       70:84:01:08:00:14:6e:54:86:9a:ba:cc:f9:37:10:
+
+       f6:e0:de:84:2d:9d:a4:85:37:d3:87:e3:15:d0:c1:
+
+       17:90:7e:19:21:6a:12:a9:76:fd:12:02:e9:4f:21:
+
+       5e:17
+
+       Exponent: 65537 (0x10001)
+		
+
+  X509v3 extensions:
+
+      X509v3 BasicConstraints: critical
+
+      CA: TRUE
+      
+  X509v3Certificate Policies:
+
+      Policy: 2.16.840.1.114171.903.1.11
+
+      CPS: http://www.wellsfargo.com/certpolicy
+
+  #数字签名，以后再讲
+  Signature Algorithm : sha1WithRSAEncryption  
+
+    d2:27:dd:9c:0a:77:2b:bb:22:f2:02:b5:4a:4a:91:f9:d1:2d:
+
+    be:e4:bb:1a:68:ef:0e:a4:00:e9:ee:e7:ef:ee:f6:f9:e5:74:
+
+    a4:c2:d8:52:58:c4:74:fb:ce:6b:b5:3b:29:79:18:5a:ef:9b:
+
+    ed:1f:6b:36:ee:48:25:25:14:b6:56:a2:10:e8:ee:a7:7f:d0:
+
+    3f:a3:d0:c3:5d:26:ee:07:cc:c3:c1:24:21:87:1e:df:2a:12:
+
+    53:6f:41:16:e7:ed:ae:94:fa:8c:72:fa:13:47:f0:3c:7e:ae:
+
+    7d:11:3a:13:ec:ed:fa:6f:72:64:7b:9d:7d:7f:26:fd:7a:fb:
+
+    25:ad:ea:3e:29:7f:4c:e3:00:57:32:b0:b3:e9:ed:53:17:d9:
+
+    8b:b2:14:0e:30:e8:e5:d5:13:c6:64:af:c4:00:d5:d8:58:24:
+
+    fc:f5:8f:ec:f1:c7:7d:a5:db:0f:27:d1:c6:f2:40:88:e6:1f:
+
+    f6:61:a8:f4:42:c8:b9:37:d3:a9:be:2c:56:78:c2:72:9b:59:
+
+    5d:35:40:8a:e8:4e:63:1a:b6:e9:20:6a:51:e2:ce:a4:90:df:
+
+    76:70:99:5c:70:43:4d:b7:b6:a7:19:64:4e:92:b7:c5:91:3c:
+
+    7f:48:16:65:7b:16:fd:cb:fc:fb:d9:d5:d6:4f:21:65:3b:4a:
+
+    7f:47:a3:fb
+
+SHA1 Fingerprint = 93:E6:AB:22:03:03:B5:23:28:DC:DA:56:9E:BA:E4:D1:D1:CC:FB:65
+
+```
+
 目前通用格式为X.509格式，证书和我们看到的文件还是有一些差异。证书需要封装在文件里。不同系统支持不同的证书文件，每种证书文件，所要求包含的具体的X.509证书内容也不一样，所以有许多种文件格式
-> .pem ( Privacy-enhanced ElectronicMail ) Base64 编码的证书
-> .cer, .crt, .der 证书内容为ASCII编码，二进制格式，但也可以和PEM一样采用base64编码
-> .p7b, .p7c (PKCS#7)（Public-Key CryptographyStandards，是由RSA实验室与其它安全系统开发商为促进公钥密码的发展而制订的一系列标准，#7表示第7个标准，PKCS一共有15个标准）封装的文件。其中，p7b可包含证书链信息，但是不能携带私钥，而p7c只包含证书。
-> .p12– (PKCS#12)标准,可包含公钥或私钥信息。如果包含了私钥信息的话，该文件内容可能需要输入密码才能查看。
+>.pem ( Privacy-enhanced ElectronicMail ) Base64 编码的证书
+
+>.cer, .crt, .der 证书内容为ASCII编码，二进制格式，但也可以和PEM一样采用base64编码
+
+>.p7b, .p7c (PKCS#7)（Public-Key CryptographyStandards，是由RSA实验室与其它安全系统开发商为促进公钥密码的发展而制订的一系列标准，#7表示第7个标准，PKCS一共有15个标准）封装的文件。其中，p7b可包含证书链信息，但是不能携带私钥，而p7c只包含证书。
+
+>.p12– (PKCS#12)标准,可包含公钥或私钥信息。如果包含了私钥信息的话，该文件内容可能需要输入密码才能查看。
+
 ```java
   public void getCertificateMsg() {
     
@@ -423,7 +593,9 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 
 ### Signature(签名)
 > 1.Signature的作用其实和MAC差不太多，但是它用得更广泛点。其使用步骤一般如下：
+
 >> 1.1 数据发送者先计算数据的摘要，然后利用私钥对摘要进行签名操作，得到一个签名值
+
 >> 1.2 数据接收者下载数据和签名值，也计算摘要。然后用公钥对摘要进行操作，得到一个计算值。然后比较计算值和下载得到的签名值，如果一样就表明数据没有被篡改
 
 > 2.从理论上说，签名不一定是针对摘要的，也可以对原始数据计算签名。但是由于签名所涉及的计算量比较大，所以往往我们只对数据摘要进行签名。在JCE中，签名都针对MD而言。
@@ -481,12 +653,17 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 
 ### Encryption And Decryption(加解密)
 > 1. JCE的加解密就比较简单了，主要用到一个Class就是Cipher。Cipher类实例在创建时需要指明相关算法和模式（即Cipher.getInstance的参数）。根据JCE的要求：
+
 >> 1.1 可以仅指明“算法”，比如“DES”。
+
 >> 1.2 也可以指明“算法/反馈模式/填充模式”（反馈模式和填充模式都和算法的计算方式有关），比如“AES/CBC/PKCS5Padding”
 
 > 2. JCE中
+
 >> 2.1 常见的算法有“DES”，“DESede”、“PBEWithMD5AndDES”、“Blowfish”。
-:>> 2.2 常见的反馈模式有“ECB”、“CBC”、“CFB”、“OFB”、“PCBC”。
+
+>> 2.2 常见的反馈模式有“ECB”、“CBC”、“CFB”、“OFB”、“PCBC”。
+
 >> 2.3 常见的填充模式有“PKCS5Padding”、“NoPadding”。
 
 `注意：算法、反馈模式和填充模式不是任意组合的，具体的组合,可以根据需要来，`
