@@ -103,7 +103,7 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 
 ##### 002: key的继承
 
-![Alt '图片'](E:\LearningNote\Boostnote\Picture\Java\JavaSecurity\key-implement.png)
+![Alt '图片'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaSecurity/key-implement.png?raw=true)
 
 > PublicKey，PrivateKey和SecretKey都派生自Key接口。所以，这三个类也是接口类，这个三个接口把key分成了3中，对应了key在实例使用的三种类型(对称加密，共有的SecretKey,非对称加密的PublicKey和PrivateKey)
 
