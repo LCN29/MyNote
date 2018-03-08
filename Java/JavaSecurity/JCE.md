@@ -8,14 +8,16 @@ Java Security(java 安全性)其实是Java平台中一个比较独立的模块�
 
 > 3. Java Authentication and Authorization Service（简写为JAAS）。JSSA和认证/授权有关
 
-JCE是JavaSecurity的大头，其他两个子模块JSSE和JAAS都依赖于它，比如SSL/TLS在工作过程中需要使用密钥对数据进行加解密，那么密钥的创建和使用就依靠JCE子模块了
+JCE是JavaSecurity的大头，其他两个子模块JSSE和JAAS都依赖于它，比如SSL/TLS在工作过程中需要使用密钥对数据进行加解密，那么密钥
+的创建和使用就依靠JCE子模块了
 
 ## JCE 了解
 
 ### 01.Service
 > Service也就是功能的具体的实现。
 
-> 在JCE中，把功能的组合叫做Service(也称作Engine)，比如：对应“加解密”的API组合CipherService，对应“消息摘要”的API组合MessageDigest Service，对应“签名”的API组合SignatureService。JCE为这些Service都定义了一个诸如XXXSpi的抽象类。
+> 在JCE中，把功能的组合叫做Service(也称作Engine)，比如：对应“加解密”的API组合CipherService，对应“消息摘要”的API
+组合MessageDigest Service，对应“签名”的API组合SignatureService。JCE为这些Service都定义了一个诸如XXXSpi的抽象类。
 
 >也就是需要某个服务时，会先定义好一个规范的接口XXXSpi。然后服务继承这个接口，具体的实现
 
@@ -27,11 +29,12 @@ JCE是JavaSecurity的大头，其他两个子模块JSSE和JAAS都依赖于它，
 ### 02,Provider
 
 ##### 001:Provicder是什么
-那么`Provider`具体是什么呢？通过源码我们可以知道Provider继承于Properties，而Properties继承于Hashtable<K,V>。所以说到底，Provider就是一个有着键值对的属性列表。
-key为某个Service或算法的名称或别名
-value为这个服务的具体实现类
-通过对应的key值，就能从Provider中找到需要的实现类
-比如：应用程序只说要创建MD5的MessageDigest实例。在代码中，“MD5”是一个字符串，而MessageDigest实例肯定是由某个类创建的。JCE根据属性key，`从所有注册的Provider里面依次查找其对应的`属性value，然后创建这个类的实例
+那么`Provider`具体是什么呢？通过源码我们可以知道Provider继承于Properties，而Properties继承于Hashtable<K,V>。所以说到底，
+Provider就是一个有着键值对的属性列表。
+> key为某个Service或算法的名称或别名
+> value为这个服务的具体实现类
+通过对应的key值，就能从Provider中找到需要的实现类比如：应用程序只说要创建MD5的MessageDigest实例。在代码中，“MD5”是一个字符串,
+而MessageDigest实例肯定是由某个类创建的。JCE根据属性key，`从所有注册的Provider里面依次查找其对应的`属性value，然后创建这个类的实例
 
 ```java
   public void getProviderMsg () {
@@ -81,7 +84,10 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 
 数字10是因为上面已经有9个provider了，现在是第10个， =的右边就是你的provider对应的全路径（包名.类名）
 
-这个10同时也表示了这个provider的优先级。上面说了，provider是service的集合。所以同一个Spi可以有不同的实现，可以放在不同的provider。当我们需要一个MessageDigestSpi。用户在创建MessageDigest的实例时。如果没有指明Provider名。JCE默认从第一个（按照优先级，由1到n）Provider开始搜索，直到找到第一个实现了MessageDigestSpi的Provider。然后，MessageDigest的实例就会由Provider来创建。
+这个10同时也表示了这个provider的优先级。上面说了，provider是service的集合。所以同一个Spi可以有不同的实现，可以放在
+不同的provider。当我们需要一个MessageDigestSpi。用户在创建MessageDigest的实例时。如果没有指明Provider名。JCE默认
+从第一个（按照优先级，由1到n）Provider开始搜索，直到找到第一个实现了MessageDigestSpi的Provider。然后，MessageDigest
+的实例就会由Provider来创建。
 
 `总结：Provider就是Service的仓库，里面存放着对应Service的实现`
 
@@ -105,9 +111,11 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 
 ![Alt '图片'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaSecurity/key-implement.png?raw=true)
 
-> PublicKey，PrivateKey和SecretKey都派生自Key接口。所以，这三个类也是接口类，这个三个接口把key分成了3中，对应了key在实例使用的三种类型(对称加密，共有的SecretKey,非对称加密的PublicKey和PrivateKey)
+> PublicKey，PrivateKey和SecretKey都派生自Key接口。所以，这三个类也是接口类，这个三个接口把key分成了3中，对应了
+key在实例使用的三种类型(对称加密，共有的SecretKey,非对称加密的PublicKey和PrivateKey)
 
-> DSAPublicKey和RSAPublicKey也派生自PublicKey接口。DSA和RSA是两种不同的算法。然后在实际中，不同的加密方式根据具体的情况，实现某个接口。这样达到了key的分类
+> DSAPublicKey和RSAPublicKey也派生自PublicKey接口。DSA和RSA是两种不同的算法。然后在实际中，不同的加密方式根据
+具体的情况，实现某个接口。这样达到了key的分类
 
 
 ##### 003: key的分类和生成
@@ -174,10 +182,13 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
         return stringBuilder.toString();
     }
 ```
-`补充:` 对称key的创建有不同的算法支持，一般有Blowfish, DES, DESede,HmacMD5,HmacSHA1,PBEWithMD5AndDES, and PBEWithMD5AndTripleDES这些算法，但是不同的平台对这些算法会有不同的支持。还有KeyGenerator如果支持上面的算法，但是SecretKeyFactory则不一定支持。比如ScreteKeyFactory则不支持HmacSHA1
+`补充:` 对称key的创建有不同的算法支持，一般有Blowfish, DES, DESede,HmacMD5,HmacSHA1,PBEWithMD5AndDES, and 
+PBEWithMD5AndTripleDES这些算法，但是不同的平台对这些算法会有不同的支持。还有KeyGenerator如果支持上面的算法，
+但是SecretKeyFactory则不一定支持。比如ScreteKeyFactory则不支持HmacSHA1
 
 
-> 2. 非对称Key：即加密和解密用得是两个Key。这两个Key构成一个Key对（KeyPair）。其中一个Key叫公钥（PublicKey），另外一个Key叫私钥（PrivateKey）JCE中，非对称Key的创建由KeyPairGenerator类来完成。
+> 2. 非对称Key：即加密和解密用得是两个Key。这两个Key构成一个Key对（KeyPair）。其中一个Key叫公钥（PublicKey），
+另外一个Key叫私钥（PrivateKey）JCE中，非对称Key的创建由KeyPairGenerator类来完成。
 
 ```java
   public void getKeyPair() {
@@ -237,21 +248,30 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 ### 03,Certificates(证书)
 > 1. Certificates(复数哦)和实际中的证书一样起证明的作用。
 
-> 2. 在key的的传递中：创建密钥的人一般会把Key的书面表达形式转换成Base64编码后的字符串发给使用者。使用者再解码，然后还原Key就可以用了。但是是不是随意一个人,给你发一个key，你就敢用呢？简单点说，你怎么判断是否该信任给你发Key的某个人或某个机构呢？
+> 2. 在key的的传递中：创建密钥的人一般会把Key的书面表达形式转换成Base64编码后的字符串发给使用者。使用者再解码，然后还原
+Key就可以用了。但是是不是随意一个人,给你发一个key，你就敢用呢？简单点说，你怎么判断是否该信任给你发Key的某个人或某个机构呢？
 
-> 3. 一般而言，我们会把Key的二进制表达式放到证书里，证书本身再填上其他信息（比如此证书是谁签发的，什么时候签发的，有效期多久，证书的数字签名等等）。但是还是没有解决的信任问题。
+> 3. 一般而言，我们会把Key的二进制表达式放到证书里，证书本身再填上其他信息（比如此证书是谁签发的，什么时候签发的，有效期多久
+，证书的数字签名等等）。但是还是没有解决的信任问题。
 
 > 4. 于是有了下面这个规定:
->> 4.1  首先，在全世界范围内（或者是一个国家，一个地区）设置一些顶级证书签发机构，凡是由这些证书签发机构（Certificate Authorities）签发的证书，我们要无条件的信任（不考虑其他伪造等因素，证书是否被篡改可通过数字签名来判断）
->> 4.2 这么多证书要发，顶级CA肯定忙不过来，所以还可以设立各种级别的CA。这种级别的CA是否该无条件信任呢？不一定。但是，这个级别的CA可以把自己拿到顶级CA那去认个证，由于顶级CA是无条件信任的，所以这个证书是可信的。
+>> 4.1  首先，在全世界范围内（或者是一个国家，一个地区）设置一些顶级证书签发机构，凡是由这些证书签发机构
+（Certificate Authorities）签发的证书，我们要无条件的信任（不考虑其他伪造等因素，证书是否被篡改可通过数字签名来判断）
+
+>> 4.2 这么多证书要发，顶级CA肯定忙不过来，所以还可以设立各种级别的CA。这种级别的CA是否该无条件信任呢？不一定。但是，这
+个级别的CA可以把自己拿到顶级CA那去认个证，由于顶级CA是无条件信任的，所以这个证书是可信的。
 
 > 5, 客户拿到这个证书时
->> 5.1 发现是某个CA签发的。如果是顶级CA签发的，那好办，直接信任。不是顶级CA签发的。客户再去查看这个发证的CA能不能被信任，一直找到顶部，如果是顶级CA，直接信任了，如果不是，2333.
->> 5.2 如果客户本身就信任公司A，那其实公司A也不需要去找CA认证，直接把证书a给客户就可以了。当然，这个时候的证书a就不需要CA的章了。
+>> 5.1 发现是某个CA签发的。如果是顶级CA签发的，那好办，直接信任。不是顶级CA签发的。客户再去查看这个发证的CA能不能被信任，
+一直找到顶部，如果是顶级CA，直接信任了，如果不是，2333....
+
+>> 5.2 如果客户本身就信任公司A，那其实公司A也不需要去找CA认证，直接把证书a给客户就可以了。当然，这个时候的证书a就不需要
+CA的章了。
 
 > 6. 由上面可知，一份证书的背后可能隐藏着一条可怕的证书链。
 
-> 7. 很多系统(Android, Microsoft,甚至浏览器)会把一些顶级CA（也叫Root CA，即根CA）的证书默认集成到系统里。`用来表明自己对这份证书和他签发的证书信任`
+> 7. 很多系统(Android, Microsoft,甚至浏览器)会把一些顶级CA（也叫Root CA，即根CA）的证书默认集成到系统里。`用来表明自己
+对这份证书和他签发的证书信任`
 
 ###### 个人认为的证书链的情况是这样的:
 > 1. 一份证书的内容有 
@@ -262,13 +282,22 @@ security.provider.10=org.bouncycastle.jce.provider.BouncyCastleProvider
 >> 1.3 签名(用上一级的机构发布的私钥进行签名的内容,顶级机构除外，其本身是用自己的私钥进行签名的) 
 
 `现在的情况是这样的：`
-> 1.一级机构去顶级机构认证，顶级结构确定可以，发了一份私钥给一级机构，后面二级机构向一级机构认证，也通过，等到了一级机构的私钥，后面的三级机构也一样。（顶级---一级---二级---三级）
+> 1.一级机构去顶级机构认证，顶级结构确定可以，发了一份私钥给一级机构，后面二级机构向一级机构认证，也通过，等到了一级机构的
+私钥，后面的三级机构也一样。（顶级---一级---二级---三级）
 
-> 2.现在三级机构需要给客户一份证书，三级机构会先用他得到的二级机构的私钥签名一下，然后把自己的信息和公钥包装在证书里面发给客户了，
+> 2.现在三级机构需要给客户一份证书，三级机构会先用他得到的二级机构的私钥签名一下，然后把自己的信息和公钥包装在证书里面发给
+客户了，
 
-> 3.客户获取到了这份证书了，但是他不打算直接信任这份证书，想要验证一下。验证就是验证签名。而签名用的是私钥加密，需要有公钥，然后他就去下载二级机构的证书，因为里面有他的公钥，但是现在又回来了，我不信任这份二级机构的证书，我要验证一下，于是我又下载了一级机构的证书，以此类推，最后终于到了顶级机构了，他的证书（也就是根证书）我要信任的，于是我直接用顶级机构的证书里面的公钥，验证了一级机构的签名，对了，那么用一级机构的证书验证二级的，以此类推，到了三级机构的证书，用二级的验证成功，三级机构的证书验证成功，最后我可以从机构的信息里面获取想要的内容了。（为什么用公钥解密出了私钥的内容（签名）就是成功了，后面再说）
+> 3.客户获取到了这份证书了，但是他不打算直接信任这份证书，想要验证一下。验证就是验证签名。而签名用的是私钥加密，需要有公钥，
+然后他就去下载二级机构的证书，因为里面有他的公钥，但是现在又回来了，我不信任这份二级机构的证书，我要验证一下，于是我又下载了
+一级机构的证书，以此类推，最后终于到了顶级机构了，他的证书（也就是根证书）我要信任的，于是我直接用顶级机构的证书里面的公钥，
+验证了一级机构的签名，对了，那么用一级机构的证书验证二级的，以此类推，到了三级机构的证书，用二级的验证成功，三级机构的证书
+验证成功，最后我可以从机构的信息里面获取想要的内容了。（为什么用公钥解密出了私钥的内容（签名）就是成功了，后面再说）
 
-> 4.那么为什么系统要把一些根证书集成到系统内部呢？简单一点，就是不是所有的根证书我的信任，在我系统内的根证书，才是我选择信任的。为什么：因为根证书的生成可以自签的，你都可以生成一份根证书。顶级CA的产生很大程度是信任度产生的。受到了别人的信任，你也可以成为顶级CA，自签的证书，也就有了保证。所以系统为了安全，把那些受信任的机构发布的证书，集成到自己的系统内，过滤到那些自签又没有信任度的根证书。
+> 4.那么为什么系统要把一些根证书集成到系统内部呢？简单一点，就是不是所有的根证书我的信任，在我系统内的根证书，才是我选择信
+任的。为什么：因为根证书的生成可以自签的，你都可以生成一份根证书。顶级CA的产生很大程度是信任度产生的。受到了别人的信任，你
+也可以成为顶级CA，自签的证书，也就有了保证。所以系统为了安全，把那些受信任的机构发布的证书，集成到自己的系统内，过滤到那些
+自签又没有信任度的根证书。
 
 ###### 证书类型
 
@@ -435,12 +464,14 @@ SHA1 Fingerprint = 93:E6:AB:22:03:03:B5:23:28:DC:DA:56:9E:BA:E4:D1:D1:CC:FB:65
 
 ```
 
-目前通用格式为X.509格式，证书和我们看到的文件还是有一些差异。证书需要封装在文件里。不同系统支持不同的证书文件，每种证书文件，所要求包含的具体的X.509证书内容也不一样，所以有许多种文件格式
+目前通用格式为X.509格式，证书和我们看到的文件还是有一些差异。证书需要封装在文件里。不同系统支持不同的证书文件，每种证书文件，
+所要求包含的具体的X.509证书内容也不一样，所以有许多种文件格式
 >.pem ( Privacy-enhanced ElectronicMail ) Base64 编码的证书
 
 >.cer, .crt, .der 证书内容为ASCII编码，二进制格式，但也可以和PEM一样采用base64编码
 
->.p7b, .p7c (PKCS#7)（Public-Key CryptographyStandards，是由RSA实验室与其它安全系统开发商为促进公钥密码的发展而制订的一系列标准，#7表示第7个标准，PKCS一共有15个标准）封装的文件。其中，p7b可包含证书链信息，但是不能携带私钥，而p7c只包含证书。
+>.p7b, .p7c (PKCS#7)（Public-Key CryptographyStandards，是由RSA实验室与其它安全系统开发商为促进公钥密码的发展而制订的一系列标准，
+#7表示第7个标准，PKCS一共有15个标准）封装的文件。其中，p7b可包含证书链信息，但是不能携带私钥，而p7c只包含证书。
 
 >.p12– (PKCS#12)标准,可包含公钥或私钥信息。如果包含了私钥信息的话，该文件内容可能需要输入密码才能查看。
 
@@ -474,7 +505,8 @@ SHA1 Fingerprint = 93:E6:AB:22:03:03:B5:23:28:DC:DA:56:9E:BA:E4:D1:D1:CC:FB:65
 >> 1. Key Entry, KE可携带KeyPair，或者SecretKey信息,如果KE存储的是KeyPair的话，它可能会携带一整条证书链信息
 >> 2. Certificate Entry, CE用于存储根证书，根证书只包含公钥。而且CE一般对应的是可信任的CA证书，即顶级CA的证书
 
-> 在JCE中，KeyStore也是一个Service（或者叫Engine）,而其实现有不同的算法。常见的有JKS, JCEKS,and PKCS12,其中功能比较全的是JCEKS。而PKCS12一般用于导入p12的证书文件。
+> 在JCE中，KeyStore也是一个Service（或者叫Engine）,而其实现有不同的算法。常见的有JKS, JCEKS,and PKCS12,
+其中功能比较全的是JCEKS。而PKCS12一般用于导入p12的证书文件。
 
 > Java平台提供了一个工具可以用来创建或者管理KeyStore，这个工具叫Keytool.放在 %Java_Home%/bin/keytool.exe
 
@@ -528,9 +560,11 @@ SHA1 Fingerprint = 93:E6:AB:22:03:03:B5:23:28:DC:DA:56:9E:BA:E4:D1:D1:CC:FB:65
 ### 05.MessageDigest(MD,消息摘要)
 > 1. 在Security里，MD其实和论文摘要(概括这篇论文的内容)的意思差不多：
 
-> 2. 先有一个消息。当然，这里的消息可以是任何能用二进制数组表达的数据。然后用某种方法来得到这个消息的摘要。当然，摘要最好要独一无二，即相同的消息数据能得到一样的摘要。不同的消息数据绝对不能得到相同的摘要。
+> 2. 先有一个消息。当然，这里的消息可以是任何能用二进制数组表达的数据。然后用某种方法来得到这个消息的摘要。
+当然，摘要最好要独一无二，即相同的消息数据能得到一样的摘要。不同的消息数据绝对不能得到相同的摘要。
 
-> 3. 和论文摘要不同的地方是，人们看到论文摘要是能大概了解到论文是说什么的，但是看到消息摘要，我们肯定不能猜出原始消息数据。MD的真实作用是为了防止数据被篡改：
+> 3. 和论文摘要不同的地方是，人们看到论文摘要是能大概了解到论文是说什么的，但是看到消息摘要，我们肯定不能猜出原始消息数据。
+MD的真实作用是为了防止数据被篡改：
 >> 3.1 数据发布者：对预发布的数据进行MD计算，得到MD值，然后放到一个公开的地方
 >> 3.2 数据下载者：下载数据后，也计算MD值，把计算值和发布者提供的MD值进行比较，如果一样就表示下载的数据没有被篡改
 ```java
@@ -560,8 +594,10 @@ SHA1 Fingerprint = 93:E6:AB:22:03:03:B5:23:28:DC:DA:56:9E:BA:E4:D1:D1:CC:FB:65
     }
   }
 ```
-`补充:`MD值其实并不能真正解决数据被篡改的问题。因为作假者可以搞一个假网站，然后提供假数据和根据假数据得到的MD值。这样，下载者下载到假数据，计算的MD值和假网站提供的MD数据确实一样，但是这份数据是被篡改过了的。
-解决这个问题的一种方法是：计算MD的时候，输入除了消息数据外，还有一个密钥。由于作假者没有密钥信息，所以它在假网站上上提供的MD肯定会和数据下载者根据密钥+假数据得到的MD值不一样。
+`补充:`MD值其实并不能真正解决数据被篡改的问题。因为作假者可以搞一个假网站，然后提供假数据和根据假数据得到的MD值。这样，
+下载者下载到假数据，计算的MD值和假网站提供的MD数据确实一样，但是这份数据是被篡改过了的。
+解决这个问题的一种方法是：计算MD的时候，输入除了消息数据外，还有一个密钥。由于作假者没有密钥信息，所以它在假网站上
+提供的MD肯定会和数据下载者根据密钥+假数据得到的MD值不一样。
 这种方法得到的MD叫Message Authentication Code，简称MAC
 
 ```java
@@ -596,9 +632,11 @@ SHA1 Fingerprint = 93:E6:AB:22:03:03:B5:23:28:DC:DA:56:9E:BA:E4:D1:D1:CC:FB:65
 
 >> 1.1 数据发送者先计算数据的摘要，然后利用私钥对摘要进行签名操作，得到一个签名值
 
->> 1.2 数据接收者下载数据和签名值，也计算摘要。然后用公钥对摘要进行操作，得到一个计算值。然后比较计算值和下载得到的签名值，如果一样就表明数据没有被篡改
+>> 1.2 数据接收者下载数据和签名值，也计算摘要。然后用公钥对摘要进行操作，得到一个计算值。然后比较计算值和下载得到的签名值，
+如果一样就表明数据没有被篡改
 
-> 2.从理论上说，签名不一定是针对摘要的，也可以对原始数据计算签名。但是由于签名所涉及的计算量比较大，所以往往我们只对数据摘要进行签名。在JCE中，签名都针对MD而言。
+> 2.从理论上说，签名不一定是针对摘要的，也可以对原始数据计算签名。但是由于签名所涉及的计算量比较大，所以往往我们只对数据摘要进行签名。
+在JCE中，签名都针对MD而言。
 
 ```java
   public void getSignatureMsg() {
@@ -652,7 +690,8 @@ SHA1 Fingerprint = 93:E6:AB:22:03:03:B5:23:28:DC:DA:56:9E:BA:E4:D1:D1:CC:FB:65
 ```
 
 ### Encryption And Decryption(加解密)
-> 1. JCE的加解密就比较简单了，主要用到一个Class就是Cipher。Cipher类实例在创建时需要指明相关算法和模式（即Cipher.getInstance的参数）。根据JCE的要求：
+> 1. JCE的加解密就比较简单了，主要用到一个Class就是Cipher。Cipher类实例在创建时需要指明相关算法和
+模式（即Cipher.getInstance的参数）。根据JCE的要求：
 
 >> 1.1 可以仅指明“算法”，比如“DES”。
 
@@ -688,7 +727,8 @@ SHA1 Fingerprint = 93:E6:AB:22:03:03:B5:23:28:DC:DA:56:9E:BA:E4:D1:D1:CC:FB:65
        byte[] finalEncrpytedData = concateTwoBuffers(encryptedData,encryptedData1);
          System.out.println("加密的后的数据---->"+bytesToHexString(finalEncrpytedData));
          
-        //获取本次加密时使用的初始向量。初始向量属于加密算法使用的一组参数。使用不同的加密算法时，需要保存的参数不完全相同。Cipher会提供相应的API
+        //获取本次加密时使用的初始向量。初始向量属于加密算法使用的一组参数。使用不同的加密算法时，
+	// 需要保存的参数不完全相同。Cipher会提供相应的API
         byte[] iv = encryptor.getIV();
        /**
           解密：解密时，需要把加密后的数据，密钥和初始向量发给解密方。
