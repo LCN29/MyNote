@@ -1,5 +1,17 @@
 # XStream(xml和JavaBean互转)
 
+### Maven依赖
+
+```xml
+<dependency>
+    <groupId>com.thoughtworks.xstream</groupId>
+    <artifactId>xstream</artifactId>
+    <version>${xstream.version}</version>
+</dependency>
+```
+
+
+
 #### JavaBean（构造函数和getter/setter省略）声明
 
 ```java
@@ -29,13 +41,16 @@ public class Student {
 
 #### 1. 使用
 
-  ```java
+```java
+
   // StaxDriver:使用SAX解析XML的解析器
   XStream xStream = new XStream(new StaxDriver());
   Student stu = Student.getStudent();
   // 调用toXML方法将对象转为xml字符串
   String xml = xStream.toXML(stu);
-  ```
+
+```
+
 
 ###### 结果
 ```xml
@@ -308,10 +323,10 @@ public interface Converter {
   public Object unmarshal(HierarchicalStreamReader reader,
       UnmarshallingContext context);    
 }
-```
+​```
 
 #### 6. 对象转为json
-```java
+​```java
   XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
 		    public HierarchicalStreamWriter createWriter(Writer writer) {
 		        return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
@@ -331,16 +346,17 @@ class Student {
 	private String lastName;
   
 }
-```
+​```
 
 ###### 结果
-```json
+​```json
 {
   "firstName": "Mahesh",
   "lastName": "Parashar"
 }
-```
+​```
 
 #### 7, 注意： 当bean中的某个属性没有赋值时，是没法显示的。
 
 #### 8. 注意：当继承时，相当于给这个类添加属性，添加的属性和本身的属性是同级的，添加的属性显示在前面
+````
