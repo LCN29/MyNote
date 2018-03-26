@@ -52,7 +52,7 @@
 	/** 向注册监听队列，但有消息来时，进行处理 */
 	consumer.registerMessageListener(new MessageListenerConcurrently() {
 
-		@Override
+		    @Override
         public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
 
         	 System.out.println("当前线程的名字:"+Thread.currentThread().getName() +"收到消息的长度" + msgs.size());
@@ -108,13 +108,10 @@
 	producer.start();
 
 	Message msg = new Message();
-	try { 
+	try {
 		msg.setTopic("TopicTest1");
 	    msg.setTags("TagA");
-<<<<<<< HEAD
 	     // 代表这条消息的业务关键词，服务器会根据 keys 创建哈希索引,后面可以通过这个key查询这条信息
-=======
->>>>>>> 001f1bbfaf0eb9cbbe50787da5366638b4249907
 	    msg.setKeys("OrderID061");
 	    msg.setBody("我是tagA的消息".getBytes());
 		SendResult sendResult = producer.send(msg);
@@ -145,11 +142,10 @@
 	});
 
 	System.exit(0);
-	
+
 ```
 
 ### RocketMQ实际的部署情况
-<<<<<<< HEAD
 ![Alt '图片'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaJar/RocketMq/RocketMq-deploy.png?raw=true)
 
 > 1. Name Server是一个几乎无状态节点，可集群部署，节点之间无任何信息同步
@@ -174,8 +170,3 @@
 
 #### 延时消息
 简单来说就是当 producer 将消息发送到 broker 后，会延时一定时间后才投递给consumer进行消费RcoketMQ的延时等级为：1s，5s，10s，30s，1m，2m，3m，4m，5m，6m，7m，8m，9m，10m，20m，30m，1h，2h。level=0，表示不延时。level=1，表示 1 级延时，对应延时 1s。level=2 表示 2 级延时，对应5s，以此类推
-
-
-
-=======
->>>>>>> 001f1bbfaf0eb9cbbe50787da5366638b4249907
