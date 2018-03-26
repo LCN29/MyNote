@@ -111,6 +111,7 @@
 	try { 
 		msg.setTopic("TopicTest1");
 	    msg.setTags("TagA");
+	     // 代表这条消息的业务关键词，服务器会根据 keys 创建哈希索引,后面可以通过这个key查询这条信息
 	    msg.setKeys("OrderID061");
 	    msg.setBody("我是tagA的消息".getBytes());
 		SendResult sendResult = producer.send(msg);
@@ -145,3 +146,30 @@
 ```
 
 ### RocketMQ实际的部署情况
+![Alt '图片'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaJar/RocketMq/RocketMq-deploy.png?raw=true)
+
+> 1. Name Server是一个几乎无状态节点，可集群部署，节点之间无任何信息同步
+> 2. Broker部署相对复杂，Broker分为Master与Slave，一个Master可以对应多个Slave，但是一个Slave只能对应一个Master，Master与Slave的对应关系通过指定相同的BrokerName，不同的BrokerId来定义，BrokerId为0表示Master，非0表示Slave。Master也可以部署多个。每个Broker与NameServer集群中的所有节点建立长连接，定时注册Topic信息到所有Name Server。
+> 3. Producer与Name Server集群中的其中一个节点（随机选择）建立长连接，定期从NameServer取Topic路由信息，并向提供Topic服务的Master建立长连接，且定时向Master发送心跳。Producer完全无状态，可集群部署。
+> 4. Consumer与Name Server集群中的其中一个节点（随机选择）建立长连接，定期从Name Server取Topic路由信息，并向提供Topic服务的Master、Slave建立长连接，且定时向Master、Slave发送心跳。Consumer既可以从Master订阅消息，也可以从Slave订阅消息，订阅规则由Broker配置决定
+
+
+### 消息类型
+
+#### 普通消息
+普通消息也叫做无序消息，简单来说就是没有顺序的消息，producer只管发送消息，consumer只管接收消息，至于消息和消息之间的顺序并没有保证，可能先发送的消息先消费，也可能先发送的消息后消费。因为不需要保证消息的顺序，所以消息可以大规模并发地发送和消费，吞吐量很高，适合大部分场景
+
+#### 有序消息
+有序消息就是按照一定的先后顺序的消息类型。消息首先由producer到broker，再从broker到consumer，这个过程如果保证了他们的顺序，那么消息也就能有序了。
+
+> 1. 全局有序消息
+>> topic 只是消息的逻辑分类，内部实现其实是由queue组成。当producer把消息发送到某个topic时，默认是会消息发送到具体的queue上。举个例子，producer 发送 order id 为 1、2、3、4 的四条消息到 topicA 上，假设 topicA 的 queue 数为 3 个（queue0、queue1、queue2），那么消息的分布可能就是这种情况，id 为 1 的在 queue0，id 为 2 的在 queue1，id 为 3 的在 queue2，id 为 4 的在 queue0。同样的consumer消费时也是按queue去消费，这时候就可能出现先消费1、4，再消费2、3，和我们的预期不符。这时只需要把订单topic的queue数改为1，如此一来，只要producer按照 1、2、3、4 的顺序去发送消息，那么 consumer 自然也就按照 1、2、3、4 的顺序去消费，这就是全局有序消息。由于一个 topic 只有一个 queue ，即使我们有多个 producer 实例和 consumer 实例也很难提高消息吞吐量，效率低下
+
+> 2. 局部有序消息
+>> 给这些需要按顺序处理的消息加上一个唯一的id，如订单的订单创建、订单付款、订单完成等消息，这些消息都有相同的order id，我们完全可以将相同id的消息发送到同一个topic 的同一个queue上。然后把不同的order id的消息发送到不同的topic的queue上。
+
+#### 延时消息
+简单来说就是当 producer 将消息发送到 broker 后，会延时一定时间后才投递给consumer进行消费RcoketMQ的延时等级为：1s，5s，10s，30s，1m，2m，3m，4m，5m，6m，7m，8m，9m，10m，20m，30m，1h，2h。level=0，表示不延时。level=1，表示 1 级延时，对应延时 1s。level=2 表示 2 级延时，对应5s，以此类推
+
+
+

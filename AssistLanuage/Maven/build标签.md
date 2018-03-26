@@ -22,7 +22,6 @@
         <build>…</build>    
       </profile>    
     </profiles> 
-    
   </project>
   
   ```
