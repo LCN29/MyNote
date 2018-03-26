@@ -111,7 +111,10 @@
 	try { 
 		msg.setTopic("TopicTest1");
 	    msg.setTags("TagA");
+<<<<<<< HEAD
 	     // 代表这条消息的业务关键词，服务器会根据 keys 创建哈希索引,后面可以通过这个key查询这条信息
+=======
+>>>>>>> 001f1bbfaf0eb9cbbe50787da5366638b4249907
 	    msg.setKeys("OrderID061");
 	    msg.setBody("我是tagA的消息".getBytes());
 		SendResult sendResult = producer.send(msg);
@@ -146,6 +149,7 @@
 ```
 
 ### RocketMQ实际的部署情况
+<<<<<<< HEAD
 ![Alt '图片'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaJar/RocketMq/RocketMq-deploy.png?raw=true)
 
 > 1. Name Server是一个几乎无状态节点，可集群部署，节点之间无任何信息同步
@@ -173,3 +177,5 @@
 
 
 
+=======
+>>>>>>> 001f1bbfaf0eb9cbbe50787da5366638b4249907
