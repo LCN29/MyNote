@@ -353,7 +353,6 @@
       <!--
         依赖范围。在项目发布过程中，帮助决定哪些构件被包括进来
         - compile ：默认范围，用于编译
-<<<<<<< HEAD
         - provided：测试和编译起作用，但是运行时不起作用，由其他的容器提供
         - runtime: 测试运行期作用，如jdbc,编译时可以用jdk的进行编译，测试和运行才需要具体的实现
         - test:    用于test任务时使用
@@ -364,18 +363,6 @@
       <scope>system</scope>
       <!-- 当 scope为systemPath，起作用，指定系统路径 -->
       <systemPath>${java_home}/lib/rt.jar</systemPath>
-=======
-        - provided：类似于编译，但支持你期待jdk或者容器提供，可以由其他的地方进行提供
-        - runtime: 在执行时需要使用
-        - test:    用于test任务时使用
-        - system: 需要外在提供相应的元素。通过systemPath来取得
-        - systemPath: 仅用于范围为system。提供相应的路径
-        - optional:   当项目自身被依赖时，标注依赖是否传递。用于连续依赖时使用
-      -->
-      <scope>provided</scope>
-      <!-- 当 scope为systemPath，起作用，指定系统路径 -->
-      <systemPath/>
->>>>>>> 8bcb21cb1485e731fcf49d079ef5d627549d7f01
       <!-- 不导入这个jar包依赖的这个jar包 -->
       <exclusions>
         <exclusion>
@@ -398,15 +385,9 @@
 
   <!-- 构建项目,针对整个项目的所有情况都有效。该配置可以被 profile全部继承 -->
   <build>
-<<<<<<< HEAD
     <!-- 项目的源码存放的地方，默认为src/main/java
     该路径是相对于pom.xml的相对路径 -->
     <sourceDirectory>src/java</sourceDirectory>
-=======
-    <!-- 该元素设置了项目源码目录,当构建项目的时候，构建系统会编译目录里的源码。
-    该路径是相对于pom.xml的相对路径 -->
-    <sourceDirectory/>
->>>>>>> 8bcb21cb1485e731fcf49d079ef5d627549d7f01
     <!--该元素设置了项目脚本源码目录 绝大多数情况下，该目录下的内容 会被拷贝到输出
     目录(因为脚本是被解释的，而不是被编译的) -->
     <scriptSourceDirectory/>
@@ -438,7 +419,6 @@
       -->
     <defaultGoal>install</defaultGoal>
 
-<<<<<<< HEAD
     <!--构建产生的所有文件存放的目录 默认在 \\${basedir}/target 目录-->
     <directory>${basedir}/target</directory>
 
@@ -453,8 +433,6 @@
         <filter>filters/filter1.properties</filter>
     </filters>
 
-=======
->>>>>>> 8bcb21cb1485e731fcf49d079ef5d627549d7f01
     <!--这个元素描述了项目相关的所有资源路径列表，例如和项目相关的属性文件，这些资源被包含在最终的打包文件里。-->
     <resources>
       <!--这个元素描述了项目相关或测试相关的所有资源路径-->
@@ -477,83 +455,6 @@
           <exclude>**/*.java</exclude>
         </excludes>
 
-<<<<<<< HEAD
-=======
-        <!-- 子项目可以引用的默认插件信息 该插件配置项直到被引用时才会被解析或绑定到生命周期
-        给定插件的任何本地配置都会覆盖这里的配置-->
-        <pluginManagement>
-          <!--使用的插件列表 。-->
-          <plugins>
-            <!--plugin元素包含描述插件所需要的信息。-->
-            <pluging>
-              <!--插件在仓库里的group ID-->
-              <groupId/>
-              <!--插件在仓库里的artifact ID-->
-              <artifactId/>
-              <!--被使用的插件的版本（或版本范围）-->
-              <version/>
-              <!--是否从该插件下载Maven扩展（例如打包和类型处理器），由于性能原因，只有在真需要下载时，该元素才被设置成enabled。-->
-              <extensions/>
-
-              <!--在构建生命周期中执行一组目标的配置。每个目标可能有不同的配置。-->
-              <executions>
-                <!--execution元素包含了插件执行需要的信息-->
-                <execution>
-                <!--执行目标的标识符，用于标识构建过程中的目标，或者匹配继承过程中需要合并的执行目标-->
-                <id/>
-                <!--绑定了目标的构建生命周期阶段，如果省略，目标会被绑定到源数据里配置的默认阶段-->
-                <phase/>
-                <!--配置的执行目标-->
-                <goals/>
-                <!--配置是否被传播到子POM-->
-                <inherited/>
-                <!--作为DOM对象的配置-->
-                <configuration/>
-                </execution>
-              </executions>
-              <!--项目引入插件所需要的额外依赖-->
-              <dependencies>
-                <!--参见dependencies/dependency元素-->
-                <dependency>......</dependency>
-              </dependencies>
-              <!--任何配置是否被传播到子项目-->
-              <inherited/>
-              <!--作为DOM对象的配置-->
-              <configuration/>
-            </plugin>
-          </plugings>
-
-        </pluginManagement>
-
-        <!--使用的插件列表-->
-        <plugins>
-          <!--参见build/pluginManagement/plugins/plugin元素-->
-          <plugin>
-            <groupId/>
-            <artifactId/>
-            <version/>
-            <extensions/>
-            <executions>
-            <execution>
-              <id/>
-              <phase/>
-              <goals/>
-              <inherited/>
-              <configuration/>
-              </execution>
-            </executions>
-
-            <dependencies>
-              <!--参见dependencies/dependency元素-->
-              <dependency>......</dependency>
-            </dependencies>
-            <goals/>
-            <inherited/>
-            <configuration/>
-          </plugin>
-        </plugins>
-
->>>>>>> 8bcb21cb1485e731fcf49d079ef5d627549d7f01
       </resource>
     </resources>
 
@@ -569,7 +470,6 @@
       </testResource>
     </testResources>
 
-<<<<<<< HEAD
     <!-- 子项目可以引用的默认插件信息 该插件配置项直到被引用时才会被解析或绑定到生命周期
     给定插件的任何本地配置都会覆盖这里的配置-->
     <pluginManagement>
@@ -649,19 +549,6 @@
         <configuration/>
       </plugin>
     </plugins>
-=======
-    <!--构建产生的所有文件存放的目录 默认在 \\${basedir}/target 目录-->
-    <directory>${basedir}/target</directory>
-    <!--产生的构件的文件名，默认值是${artifactId}-${version}。-->
-    <finalName/>
-    <!--当filtering开关打开时，使用到的过滤器属性文件列表-->
-    <filters>
-        <!--定义在filter的文件中的name = value键值对，会在build时代替\${name} 值应用到
-        resources标签中 ,既将resources标签内的\${name}替换成真正的内容,
-        默认filter文件夹为\${basedir}/src/main/filters-->
-        <filter>filters/filter1.properties</filter>
-    </filters>
->>>>>>> 8bcb21cb1485e731fcf49d079ef5d627549d7f01
 
   </build>
 
@@ -730,11 +617,7 @@
       <!--参见properties元素-->
       <properties>...</properties>
     </profile>
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 8bcb21cb1485e731fcf49d079ef5d627549d7f01
   </profiles>
 
 </project>
