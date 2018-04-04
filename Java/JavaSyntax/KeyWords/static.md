@@ -70,3 +70,45 @@
     OutClass oc = new OutClass1();   
     InnerStaticClass ic = new InnerStaticClass(); //不依赖与外部类的实例 
 ```
+
+> 1. 静态方法内可以创建内部静态类
+```java
+  public class MyOutClass{
+
+    public static Result getResult() {
+
+      Result result = new Result();
+      result.setValid(true);
+      result.setHint("成功");
+      return result;
+    }
+
+    public static class Result{
+
+      private Boolean valid;
+      private String hint; 
+
+      public Boolean getValid() {
+        return valid;
+      }
+
+      public void setValid(Boolean valid) {
+        this.valid = valid;
+      }
+
+      public String getHint() {
+        return hint;
+      }
+
+      public void setHint(String hint) {
+        this.hint = hint;
+      }
+
+    }
+
+  }
+
+  // 外部调用
+  MyOutClass.Result = MyOutClass.getResult();
+
+```
