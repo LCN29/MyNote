@@ -11,18 +11,18 @@
 ## 配置
 #### 1.日志文件log4j.properties
 ```xml
-  log4j.rootLogger=DEBUG, stdout
-  log4j.appender.stdout=org.apache.log4j.ConsoleAppender
-  log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
-  log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
+log4j.rootLogger=DEBUG, stdout
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
 ```
 
 #### 2.数据库连接信息文件 db.properties
 ```xml
-  jdbc.driver=com.mysql.jdbc.Driver
-  jdbc.url=jdbc:mysql://localhost:3306/javastudy?characterEncoding=utf-8
-  jdbc.username=root
-  jdbc.password=123456
+jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/javastudy?characterEncoding=utf-8
+jdbc.username=root
+jdbc.password=123456
 ```
   
 #### 3.二级缓存ehcache ehcache.xml
@@ -88,10 +88,10 @@
 	<!-- 配置SqlSessionFatory -->	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		
-    <!-- 数据源  -->
+    		<!-- 数据源  -->
 		<property name="dataSource" ref="dataSource"></property>
     
-    <!-- 配置myBatis的配置文件 -->
+    		<!-- 配置myBatis的配置文件 -->
 		<property name="configLocation" value="classpath:mybatis/SqlMapConfig.xml"></property>
 	</bean>		
 		
@@ -120,9 +120,9 @@
 #### 2. 向sqlMapConfig.xml注册这个mapper.xml文件
 
 ```xml
-  <mappers>
-		<mapper resource="sqlmap/User.xml"/>
-  </mappers>
+<mappers>
+	<mapper resource="sqlmap/User.xml"/>
+</mappers>
 ```
 
 
@@ -147,10 +147,9 @@ UserDaoImpl.java的内容
 	@Override
 	public Users findUserById(int id) throws Exception {
 		//继承了SqlSessionDaoSupport 可以通过getSqlSession()；获取到sqlSession
-		
 		SqlSession sqlSession= this.getSqlSession();
 		Users user=sqlSession.selectOne("user.findUserById", id);
-	    System.out.print(user.toString());
+	   	System.out.print(user.toString());
 		return user;
 	}
 }
@@ -161,10 +160,10 @@ UserDaoImpl.java的内容
 
 ```java
   <!--原始的dao开发  -->
-	<bean id="UserDao" class="com.example.ssm.dao.UserDaoImpl">
+  <bean id="UserDao" class="com.example.ssm.dao.UserDaoImpl">
     <!-- ref表示参照上方的id为sqlSessionFactory的bean -->
-		 <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-	</bean>
+    <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+  </bean>
 
 ```
 
@@ -174,7 +173,7 @@ UserDaoImpl.java的内容
   
   String path= "classpath:spring/applicationContext.xml";
   //获取applicationContext对象
-	ApplicationContext	applicationContext= new ClassPathXmlApplicationContext(path);
+  ApplicationContext	applicationContext= new ClassPathXmlApplicationContext(path);
   //获取实现类 UserDao为applicationContext.xml 对应bean的id
   UserDao userDao= (UserDao) applicationContext.getBean("UserDao");
   
@@ -209,7 +208,7 @@ UserDaoImpl.java的内容
 ```xml
   <mappers>
     <!-- 此处直接注册了整个包 -->
-	  <package name="com.example.ssm.mapper"/>
+    <package name="com.example.ssm.mapper"/>
   </mappers>
 ```
 
@@ -229,11 +228,11 @@ UserDaoImpl.java的内容
 ```xml
   <!-- MapperFactoryBean 可以根据接口生成代理对象 -->
   <bean id="UserMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<!--指定接口 -->
-		<property name="mapperInterface" value="com.example.ssm.mapper.UserMapper"></property>
-		<!-- 配置sqlSessionFactory -->
-		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-	</bean> 
+	<!--指定接口 -->
+	<property name="mapperInterface" value="com.example.ssm.mapper.UserMapper"></property>
+	<!-- 配置sqlSessionFactory -->
+	<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+  </bean> 
 ```
 
 #### 5.测试
@@ -241,7 +240,7 @@ UserDaoImpl.java的内容
 ```java
   String path= "classpath:spring/applicationContext.xml";
   //获取applicationContext对象
-	ApplicationContext	applicationContext= new ClassPathXmlApplicationContext(path);
+  ApplicationContext	applicationContext= new ClassPathXmlApplicationContext(path);
   
   //获取实现类 UserDao为applicationContext.xml 对应bean的id
   UserMapper userMapper = (UserMapper) applicationContext.getBean("UserMapper");
@@ -270,11 +269,11 @@ UserDaoImpl.java的内容
 #### 4.注册
 ```xml
   <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<!--指定扫描的包名 ,如果需要扫描多个包，每个包之间以逗号隔开-->
-		<property name="basePackage" value="com.example.ssm.mapper"/>
-    
-		<!-- 指定包中的sqlSessionFactory-->
-		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+	<!--指定扫描的包名 ,如果需要扫描多个包，每个包之间以逗号隔开-->
+	<property name="basePackage" value="com.example.ssm.mapper"/>
+
+	<!-- 指定包中的sqlSessionFactory-->
+	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
   </bean>
 ```
 
