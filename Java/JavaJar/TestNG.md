@@ -180,7 +180,7 @@ public class Test {
 ```java
 public class Test {
 
-	@Test(groups = {"group01", "group03", "base-group"})
+    @Test(groups = {"group01", "group03", "base-group"})
     public void test01() {
         System.out.println("@Test01注解");
     }
@@ -341,14 +341,16 @@ public class GroupTest {
 ## 08.套件(suite)测试
 套件测试需要依靠配置文件，因为我们无法在代码里面进行配置。
 套件suite的属性
-|     属性     |             描述                     |
-|:------------:|:------------------------------------:|
-|     name     |强制属性，指定这个条件的名字            |
-|   verbose    |运行的级别或详细程度                   |
-|   parallel   |TestNG是否运行不同的线程来运行这个套件|
-| thread-count | 如果启用并行模式(忽略其他方式)，则要使用的线程数 |
-| annotations  | 在测试中使用的注释类型                 |
-| time-out     | 在本测试中的所有测试方法上使用的默认超时 |
+
+|属性 | 描述 | 
+| -   |  :- | 
+|name |强制属性，指定这个条件的名字|
+|verbose      |运行的级别或详细程度                              |
+|parallel     |TestNG是否运行不同的线程来运行这个套件             |
+|thread-count | 如果启用并行模式(忽略其他方式)，则要使用的线程数   |
+|annotations  | 在测试中使用的注释类型                           |
+|time-out     | 在本测试中的所有测试方法上使用的默认超时           |
+
 
 先声明三个基础的类作为准备工作
 
@@ -743,5 +745,7 @@ public class SpringTest extends AbstractTestNGSpringContextTests {
 }
 ```
 > 1.需要依赖`spring-test`
+
 > 2.测试类需要继承AbstractTestNGSpringContextTests类
+
 > 3.指定配置文件@ContextConfiguration(locations=“”)
