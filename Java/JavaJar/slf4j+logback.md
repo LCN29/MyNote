@@ -269,21 +269,77 @@ logger只有一个name,一个可选的level属性和一个可选的 additivity�
 
 ###### 5. Appender的几个class属性
 > 1. `ConsoleAppender` : 将内容输出到控制台
+```xml
+<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+        <pattern>%msg%n</pattern>
+    </encoder>
+    <!--默认值为System.out   -->
+    <target>System.err</target>
+</appender>
+```
 
+> 2. `FileAppender` : 将内容输出到文件
+```xml
+<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+  <!--输出到哪里  -->
+  <file>testFile.log</file>
+  <!-- 文件已近存在时， true(默认): 追加，
+      false: 清空，再添加 -->
+  <append>true</append>
+  <!-- 安全的写入到入指定文件中，即使运行在不同的主机上，
+  默认为false, prudent模式比非prudent模式，耗时间
+  -->
+  <prudent>true</prudent>
+  <encoder>
+    <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n
+    </pattern>
+</encoder>
+</appender>
+```
 
+> 3. `RollingFileAppender` : 先将内容记录到一个文件，满足条件后记录到另一个文件（归档）
+```xml
+<appender name="appLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+   <Encoding>UTF-8</Encoding>
+   <file/>
+   <append/>
+   <encoder/>
+   <prudent/>
+   <!--当发生滚动时，决定 RollingFileAppender 的行为-->
+   <rollingPolicy/>
+   <!-- 告知 RollingFileAppender 何时激活滚动 -->
+   <triggeringPolicy />
+</appender>
+```
+要实现RollingFileAppender需要指定好rollingPolicy和triggeringPolicy。`rollingPolicy`指定了如何滚动(归档)
+`triggeringPolicy`指定了什么时候滚动(归档)。如果 RollingPolicy的实现类也实现了 TriggeringPolicy 接口，那么只需要设置 RollingPolicy
 
+`例子`
+```xml
+<appender name="FILE"
+class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <file>testFile.log</file>
+  <rollingPolicy
+  class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+    <fileNamePattern>testFile.%i.log.zip</fileNamePattern>
+    <minIndex>1</minIndex>
+    <maxIndex>3</maxIndex>
+  </rollingPolicy>
+  <triggeringPolicy
+    class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+    <maxFileSize>5MB</maxFileSize>
+  </triggeringPolicy>
+  <encoder>
+    <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+  </encoder>
+</appender>
+```
+> 1. `file`: 指定了一开始记录的位置
+> 2. `fileNamePattern` : 指定了最终归档的文件名,其中的`%i`指定了归档文件的名字的一部分。`zip`指定了最终归档的压缩方式为zip。
+> 3. `minIndex`和`maxIndex`: %i的取值范围。同时也暗指了能够存在的归档文件的最大数
 
-
-一个 logger 可以被关联多个 appender。addAppender（）为指定的 logger 添加一个appender
-
-> 3. Layout
-通过给Appender关联一个Layout可以对日志格式进行定制。
-如定制了输出的格式为:
-`"%-4relative [%thread] %-5level %logger{32} - %msg%n"`
-打印出来的日志会是这样的:
-`176 [main] DEBUG manual.architecture.HelloWorld2 - Hello world.`
-> 176 :自程序启动以来的逝去时间，单位是毫秒
-> [main] :发出记录请求的线程
-> DEBUG : 是记录请求的级别
-> manual.architecture.HelloWorld2 : logger的名称
-> Hello world. : 请求的消息文字
+| 滚动次数 | 活动输出目标 | 归档记录文件 | 描述                         |
+| -------- | ------------ | ------------ | ---------------------------- |
+| 0        | foo.log      | -            | 还没发生滚动，记录到初始文件 |
+|          |              |              |                              |
