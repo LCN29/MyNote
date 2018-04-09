@@ -192,17 +192,89 @@ logger只有一个name,一个可选的level属性和一个可选的 additivity�
 >2. level：要记录的日志级别，包括 TRACE < DEBUG < INFO < WARN < ERROR
 >3. additivity: 作用在于children-logger是否使用 rootLogger配置的appender进行输出，false：表示只用当前logger的appender-ref。true：表示当前logger的appender-ref和自身所有祖先的appender-ref都有效
 
+`例子：如果不想看到com.eigpay.nodebug包下的的DEBUG 信息`
+```xml
+<configuration>
+  <appender name="STDOUT"
+  class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+    <pattern>
+      %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+    </pattern>
+    </encoder>
+  </appender>
+  <!-- 有效级别为info, debug的请求级别<info的有效级别， 所以不会输出 debug的信息 -->
+  <logger name="com.eigpay.nodebug" level="INFO" />
+
+  <root level="DEBUG">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>
+```
 
 
+##### Appender(重点)
+![Alt '图片'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaJar/slf4j+logback/logback-config02.png?raw=true)
 
-`Appender介绍`
-> 1. 输出目的
+###### 1.作用
 在 logback 里，一个输出目的地称为一个appender（日志输出的地方）。目前有控制台、文件、远程套接字服务器、MySQL、PostreSQL、Oracle和其他数据库、JMS和远程UNIX Syslog守护进程等多种 appender。
 
-一个 logger 可以被关联多个 appender。addAppender（）为指定的 logger 添加一个appender
+###### 2.特点
+例如:`L.info（"123"）`输出到控制台，那么L的祖先也会将这条记录输出到自身的appender。这就是`appender叠加性`。设置logger的additivity 为 false，则可以取消这种默认的appender累积行为
+。然而，如果 logger L的某个祖先P设置叠加性标识为 false，那么，L的输出会发送给L与 P之间(含P)的所有 appender，但不会发送给P的任何祖先的 appender。
 
-> 2. Appender 叠加性
-Logger L 的记录语句的输出会发送给 L 及其祖先的全部 appender。这就是“appender叠加性”的含义。例如:`L.info（"123"）`输出到控制台，那么L的祖先也会将这条记录输出到自身的appender。设置 logger的additivity 为 false，则可以取消这种默认的appender累积行为。然而，如果 logger L的某个祖先P设置叠加性标识为 false，那么，L的输出会发送给L与 P之间(含P)的所有 appender，但不会发送给P的任何祖先的 appender。
+###### 3.必填属性
+`name` :指定appender的名称
+
+`class` :appender 类的全限定名
+
+###### 4.子组件
+`filter` : 过滤器
+
+`layout` : 用于定制日志输出的格式，现在开始被`encoder`代替
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <!-- 将日志输出为文件 -->
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <!-- 文件名 -->
+    <file>/app/log/myApp.log</file>
+    <!--输出格式  -->
+    <encoder>
+      <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--将日志输出到控制台  -->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="com.eigpay.appender" level="INFO">
+    <!-- 标准输出, 此次没有设置 additivity，rootLogger的appender-ref都有效 ，所以会输出到控制台和文件中 -->
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <!-- 跟logger输出为文件 -->
+  <root level="DEBUG">
+    <appender-ref ref="FILE" />
+  </root>
+
+</configuration>
+```
+
+###### 5. Appender的几个class属性
+> 1. `ConsoleAppender` : 将内容输出到控制台
+
+
+
+
+
+一个 logger 可以被关联多个 appender。addAppender（）为指定的 logger 添加一个appender
 
 > 3. Layout
 通过给Appender关联一个Layout可以对日志格式进行定制。
@@ -215,6 +287,3 @@ Logger L 的记录语句的输出会发送给 L 及其祖先的全部 appender�
 > DEBUG : 是记录请求的级别
 > manual.architecture.HelloWorld2 : logger的名称
 > Hello world. : 请求的消息文字
-
-
-
