@@ -69,13 +69,82 @@ StatusPrinter.print(lc);
 
 ## 学习
 
-##### 1.logback 的体系结构
+#### 1.logback 的体系结构
 目前，logback 分为三个模块：Core、Classic 和 Access。
 > 1. Core模块是其他两个模块的基础
 > 2. Classic 模块扩展了core模块,Classic 模块相当于 log4j的显著改进版
 > 3. Access 模块与 Servlet 容器集成，提供 HTTP 访问记录功能
 
-##### 2.Logger
+#### logback可以有以下三种配置文件
+> 1. logback.groovy
+> 2. logback-test.xml
+> 3. logback.xml
+logback加载时也是按以上顺序在classpath进行加载的。，当加载到其中一个时，就停止加载。如果都没有的话，使用自身默认的
+
+当三个文件都没有，logback默认地会调用BasicConfigurator，创建一个最小化配置。效果和这个差不多
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT"  class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
+```
+
+#### 启动时打印logback的内部信息
+代码的形式
+```java
+LoggerContext lc = (LoggerContext)
+LoggerFactory.getILoggerFactory();
+StatusPrinter.print(lc);
+```
+
+配置的形式1
+```xml
+<configuration debug="true">
+  ...
+</configuration>
+```
+`debug=true` : 可以在启动的时候，打印logback内部的状态信息
+
+配置的形式2
+```xml
+<configuration>
+  <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
+</configuration>
+```
+设置了一个监听器`OnConsoleStatusListener`，最终效果和`debug=true`一样，2选1。
+
+#### 配置文件修改后自动重新加载
+```xml
+<configuration scan="true" scanPeriod="30 seconds">
+  ...
+</configuration>
+```
+`scan=true`:配置文件修改时能够重新加载
+`scanPeriod=30 seconds` : 每隔30s扫描一次，默认为1m，如果不写单位是，默认为毫秒
+
+#### 配置
+![Alt '图片'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaJar/slf4j+logback/logback-config01.png?raw=true)
+
+如图一个logback的配置文件的最外层是`configuration`,第二级可以0到无限个的`appender`，0到无限个`logger`,最多一个的`root`
+
+##### root
+定义了Logger的根logger
+```xml
+<!-- 定义了根logger的有效级别 -->
+<root level="DEBUG">
+	<appender-ref ref="appLogAppender" />
+</root>
+```
+
+##### Logger
 > 1. Logger上下文
 Logger的实例是有联系的。比如，名为“com.foo"”的 logger 是名为“com.foo.Bar”之父。Logger内部维护了一个树结果，将各个logger关联起来。通过
 `Logger rootLogger = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);`
@@ -109,6 +178,22 @@ barlogger.info("Located nearest gas station.");
 barlogger.debug("Exiting gas station search");
 ```
 
+> 4. 配置
+```xml
+ <logger name="org.hibernate" level="error" />
+
+ <logger name="com.creditease" level="info" additivity="true">
+      <appender-ref ref="appLogAppender" />
+ </logger>
+```
+
+logger只有一个name,一个可选的level属性和一个可选的 additivity属性。
+>1. name：表示匹配的logger类型前缀，也就是包的前半部分
+>2. level：要记录的日志级别，包括 TRACE < DEBUG < INFO < WARN < ERROR
+>3. additivity: 作用在于children-logger是否使用 rootLogger配置的appender进行输出，false：表示只用当前logger的appender-ref。true：表示当前logger的appender-ref和自身所有祖先的appender-ref都有效
+
+
+
 
 `Appender介绍`
 > 1. 输出目的
@@ -130,3 +215,6 @@ Logger L 的记录语句的输出会发送给 L 及其祖先的全部 appender�
 > DEBUG : 是记录请求的级别
 > manual.architecture.HelloWorld2 : logger的名称
 > Hello world. : 请求的消息文字
+
+
+
