@@ -340,6 +340,10 @@ class="ch.qos.logback.core.rolling.RollingFileAppender">
 > 3. `minIndex`和`maxIndex`: %i的取值范围。同时也暗指了能够存在的归档文件的最大数
 
 | 滚动次数 | 活动输出目标 | 归档记录文件 | 描述                         |
-| -------- | ------------ | ------------ | ---------------------------- |
-| 0        | foo.log      | -            | 还没发生滚动，记录到初始文件 |
-|          |              |              |                              |
+| --------| ----------| ------------ | ---------------------------- |
+| 0       | foo.log | -            | 还没发生滚动，记录到初始文件 |
+| 1       | foo.log | foo1.log     |  第 1 次滚动。foo.log 被重命名为 foo1.log。创建新 foo.log并成为活动输出目标 |
+| 2       | foo.log | foo1.log ,foo2.log | 第2次滚动,foo1.log被重命名为foo2.log。foo.log被重命名为foo1.log。创建新foo.log并成为活动输出目标|
+| 3       | foo.log | foo1.log，foo2.log，foo3.log |  如2，foo2-->foo3. foo1-->foo1, foo->foo1, 再生成 foo |
+| 4       | foo.log | foo1.log，foo2.log，foo3.log |  此时及此后，发生滚动时会先删除 foo3.log, 其余按照3的形式重命名 |
+
