@@ -539,6 +539,72 @@ h} == xEx{length,evaluator-1, ..., evaluator-n}
   </root>
 </configuration>
 ```
+作用：对日志进行过滤。执行一个过滤器会有返回个枚举值，即DENY，NEUTRAL，ACCEPT其中之一。
+> 1. `DENY`: 日志将立即被抛弃不再经过其他过滤器
+> 2. `NEUTRAL`: 交给下个过滤器过接着处理日志
+> 3. `ACCEPT`: 对日志进行输出，不再经过剩余过滤器
+
+几个常用的过滤器
+`LevelFilter`: 级别过滤器，根据日志级别进行过滤。如果日志级别等于配置级别，过滤器会根据onMath 和 onMismatch接收或拒绝日志
+```xml
+<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>INFO</level>
+       <!-- 符合条件的直接返回 accept  -->
+      <onMatch>ACCEPT</onMatch>
+        <!-- 不符合条件的直接返回 deny  -->
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <encoder>
+      <pattern>
+        %-4relative [%thread] %-5level %logger{30} - %msg%n
+      </pattern>
+    </encoder>
+  </appender>
+```
+
+`ThresholdFilter`: 临界值过滤器。当日志级别等于或高于临界值时，过滤器返回NEUTRAL；当日志级别低于临界值时，日志返回 DENY
+```xml
+<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- 过滤掉 TRACE 和 DEBUG 级别的日志-->
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>INFO</level>
+    </filter>
+    <encoder>
+      ...
+    </encoder>
+</appender>
+```
+
+`EvaluatorFilter`: 求值过滤器，评估、鉴别日志是否符合指定条件。需要额外的两个JAR包，commons-compiler.jar和janino.jar
+```xml
+<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+
+    <evaluator>
+      <matcher>
+        <!--匹配器mather的名字  -->
+        <Name>odd</Name>
+        <!-- 正则表达式  -->
+        <regex>statement [13579]</regex>
+      </matcher>
+      <!-- 进行匹配 -->
+      <expression>odd.matches(formattedMessage)</expression>
+    </evaluator>
+    <!-- mather返回true 由 onMatch处理，
+      false由OnMismatch
+    -->
+    <OnMatch>DENY</OnMatch>
+    <OnMismatch>NEUTRAL</OnMismatch>
+  </filter>
+
+  <encoder>
+    ...
+  </encoder>
+
+</appender>
+```
+
 
 #### 5.时间戳
 ```xml
