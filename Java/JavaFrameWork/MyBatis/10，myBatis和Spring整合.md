@@ -5,6 +5,47 @@
 >持久层的mapper交给Spring管理
 >生成代理对象，通过SqlSessionFactory创建SqlSession
 
+## Maven依赖
+```xml
+<!-- mysql驱动 -->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+</dependency>
+
+<!-- mybatis-spring -->
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis-spring</artifactId>
+</dependency>
+
+<!-- mybatis -->
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis</artifactId>
+</dependency>
+
+<!-- druid连接池 -->
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>druid</artifactId>
+</dependency>
+
+<!-- spring config -->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context-support</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-jdbc</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-orm</artifactId>
+</dependency>
+```
+
 ## 项目结构
 ![Alt '项目结构'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaFrameWork/project-struction.png?raw=true)
 
@@ -19,18 +60,24 @@ log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
 
 #### 2.数据库连接信息文件 db.properties
 ```xml
+jdbc.url=jdbc:mysql://127.0.0.1:3306/rpc-db?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;transformedBitIsBoolean=true&amp;allowMultiQueries=true
 jdbc.driver=com.mysql.jdbc.Driver
-jdbc.url=jdbc:mysql://localhost:3306/javastudy?characterEncoding=utf-8
 jdbc.username=root
 jdbc.password=123456
+jdbc.validationQuery=select 1 from dual
+jdbc.removeAbandonedTimeout=180
+jdbc.initialSize=10
+jdbc.minIdle=30
+jdbc.maxActive=100
+jdbc.maxWait=30000
 ```
   
 #### 3.二级缓存ehcache ehcache.xml
 ```xml
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="../config/ehcache.xsd">
-	
-	<diskStore path="F:\develop\ehcache" />
+xsi:noNamespaceSchemaLocation="../config/ehcache.xsd">
+
+<diskStore path="F:\develop\ehcache" />
 	<defaultCache 
 		maxElementsInMemory="1000" 
 		maxElementsOnDisk="10000000"
@@ -76,14 +123,21 @@ jdbc.password=123456
 	<context:property-placeholder location="classpath:db.properties"/>	
 		
 	<!-- 配置数据源 既数据库的连接池 -->	
-	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="${jdbc.driver}"/>
-		<property name="url" value="${jdbc.url}"/>
-		<property name="username" value="${jdbc.username}"/>
-		<property name="password" value="${jdbc.password}"/>
-		<property name="maxActive" value="10"/>
-		<property name="maxIdle" value="5"/>
-	</bean>
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	        <property name="maxActive" value="${jdbc.maxActive}" />
+		<property name="initialSize" value="${jdbc.initialSize}" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" />
+		<property name="testOnBorrow" value="true" />
+		<property name="minIdle" value="${jdbc.minIdle}" />
+		<property name="maxWait" value="${jdbc.maxWait}" />
+		<property name="validationQuery" value="${jdbc.validationQuery}" />
+		<property name="connectionProperties" value="clientEncoding=UTF-8" />
+	 </bean>
 	
 	<!-- 配置SqlSessionFatory -->	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
