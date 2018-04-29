@@ -116,3 +116,7 @@ $CLIEXEC -a "你的redis密码" -p $REDISPORT shutdown(在中间添加 -a "你�
 ```
 > `chkconfig redis_6379 on` 将Redis加入系统启动项
 >3. 后面就可以通过`service redis_6379 start`和`service redis_6379 start`启动redis服务了
+
+# 六,开启端口
+>1. `firewall-cmd --permanent --zone=public --add-port=6379/tcp`
+>2. `firewall-cmd --reload`
