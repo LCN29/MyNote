@@ -1,6 +1,6 @@
 # 05，AOP(面向切面编程)
 
-![Alt 'aop'](E:\LearningNote\Boostnote\Picture\Java\JavaFrameWork\Aop.png)
+![Alt 'aop'](https://github.com/LCN29/MyNote/blob/picture-branch/Picture/Java/JavaFrameWork/aop.png?raw=true)
 在程序运行到某个切入点时，调用切面，通过通知，将切面里面的某些代码织入到对应的切入点
 
 ## 五种通知
@@ -80,7 +80,14 @@ public class BeforeBiz {
 @Aspect
 public class BeforeAspect {
     
-    @Before("execution(* com.eigpay.before..*(..))")
+    
+    // 切面的表达是 
+    // * 任意返回值
+    // com.eigpay.before..包和其子包
+    // * 任意类
+    // * 任意方法
+    // (..) 任意参数
+    @Before("execution(* com.eigpay.before..*.*(..))")
     public void before() {
         System.out.println("我是注解的切面类：before");
     }
@@ -147,7 +154,7 @@ public class BeforeAspect {
 ```
 **注解的方式**
 ```java
-  @AfterThrowing(throwing="ex",pointcut="execution(* com.eigpay.afterthrowing.*Biz.*(..))")
+    @AfterThrowing(throwing="ex",pointcut="execution(* com.eigpay.afterthrowing.*Biz.*(..))")
     public void afterThrowing(Throwable ex) {
         System.out.println("注解切面收到了业务类的异常:"+ex.getMessage());
     }
@@ -159,11 +166,11 @@ public class BeforeAspect {
 **配置的方法**
 ```xml
 <aop:config>
-	   <aop:aspect id="myAspect" ref="myAfterAspect" >
-	       <aop:pointcut expression="execution(* com.eigpay.after.*Biz.*(..))" id="afterPointCut"/>
-	       <aop:after method="after" pointcut-ref="afterPointCut"/>
-	   </aop:aspect>
-	</aop:config>
+   <aop:aspect id="myAspect" ref="myAfterAspect" >
+       <aop:pointcut expression="execution(* com.eigpay.after.*Biz.*(..))" id="afterPointCut"/>
+       <aop:after method="after" pointcut-ref="afterPointCut"/>
+   </aop:aspect>
+</aop:config>
 ```
 
 ```java
@@ -294,14 +301,12 @@ public class FitImpl implements Fit {
 
 配置
 ```xml
-  <aop:config>
-		<aop:aspect id="myAspectAnnaction" ref="myAspect">
-			<aop:declare-parents 
-			    types-matching="com.eigpay.introductions.biz.*(+)"
-				implement-interface="com.eigpay.introductions.Fit" 
-				default-impl="com.eigpay.introductions.FitImpl"/>
-		</aop:aspect>
-	</aop:config>
+<aop:config>
+	<aop:aspect id="myAspectAnnaction" ref="myAspect">
+		<aop:declare-parents types-matching="com.eigpay.introductions.biz.*(+)"
+			implement-interface="com.eigpay.introductions.Fit" default-impl="com.eigpay.introductions.FitImpl"/>
+	</aop:aspect>
+</aop:config>
 ```
 使用
 ```java
