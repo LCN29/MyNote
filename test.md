@@ -17,7 +17,7 @@ enable	| 用户账号是否可以用 | tinyint
 ## 登录
 
 >1 UI界面
-![UI界面](https://lcn-public.oss-cn-shenzhen.aliyuncs.com/18-7-27/88765338.jpg)
+![UI界面](https://lcn-public.oss-cn-shenzhen.aliyuncs.com/18-7-27/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20180727150921.png)
 
 >2 流程图
 ![流程图](https://lcn-public.oss-cn-shenzhen.aliyuncs.com/18-7-27/18088755.jpg)
@@ -86,6 +86,7 @@ enable	| 用户账号是否可以用 | tinyint
 @Data
 @NoArgsConstructor
 public class User {
+
 	private int userId;
 	private String userName;
 	private String email;
@@ -124,7 +125,7 @@ public class Produce {
 public class Order {
 
 	private int orderId;
-	private int produceId;
+	private Procuce produce;
 	private String designNumber;
 	private String backStamp;
 	private int amount;
@@ -145,6 +146,7 @@ public class Order {
 @Data
 @NoArgsConstructor
 public class StampOrder {
+
 	private int stampOrderId;
 	private String stampOrderName;
 	private User fromUser;
