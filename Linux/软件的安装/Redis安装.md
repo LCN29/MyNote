@@ -4,7 +4,7 @@
 >1. `yum install gcc-c++`
 >2.  中途会有一个选择提示,输入`y`确定就行了。
 
-# 二,从Redis的官网(https://redis.io/)下载Redis的安装包，上传到服务器
+# 二,从Redis的官网(https://redis.io/) 下载Redis的安装包，上传到服务器
 
 # 三,解压安装包并安装
 >1. `tar zxf redis-4.0.9.tar.gz`
