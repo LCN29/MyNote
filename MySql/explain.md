@@ -1,6 +1,10 @@
 # explain 
 
-explain 可以用来分析sql语句的性能
+explain 可以用来分析sql语句的性能, 主要关注(type, key, row)
+
+
+## 前提
+数据库中的索引基本都是有序的
 
 ## 例子
 ```sql
@@ -35,9 +39,9 @@ EXPLAIN select * from t_u_playerinfo where NickName like 'AAAA';
 
 >2. const:表最多有一个匹配行,它将在查询开始时被读取。因为仅有一行,在这行的列值可被优化器剩余部分认为是常数。const表很快,因为它们只读取一次
 
->3. eq_ref:对于每个来自于前面的表的行组合,从该表中读取一行。这可能是最好的联接类型,除了const类型。
+>3. eq_ref: 在查询时已经知道数据项为一个(主键, unique),这可能是最好的联接类型,除了const类型。
 
->4. ref:对于每个来自于前面的表的行组合,所有有匹配索引值的行将从这张表中读取。
+>4. ref: 查找条件列使用了索引而且不为主键和unique, 意思就是虽然使用了索引,但该索引列的值并不唯一,有重复。
 
 >5. fulltext: 使用全文索引执行的
 
@@ -49,11 +53,11 @@ EXPLAIN select * from t_u_playerinfo where NickName like 'AAAA';
 
 >8. index_subquery:该联接类型类似于unique_subquery。可以替换IN子查询,但只适合下列形式的子查询中的非唯一索引: value IN (SELECT key_column FROM single_table WHERE some_expr)
 
->9. range:只检索给定范围的行,使用一个索引来选择行。
+>9. range: 只检索给定范围的行, 用于查询的列需要为索引。
 
->10. index:该联接类型与ALL相同,除了只有索引树被扫描。这通常比ALL快,因为索引文件通常比数据文件小。
+>10. index: 为了找到数据，进行了索引扫描(索引树被扫描)。这通常比ALL快,因为索引文件通常比数据文件小。
 
->11. ALL:对于每个来自于先前的表的行组合,进行完整的表扫描。
+>11. ALL: 为了找到数据,进行完整的表扫描。
 
 5. possible_keys:  指出MySQL能使用哪个索引在该表中找到行。如果是空的，没有相关的索引。
 6. key: 显示MySQL实际决定使用的键。如果没有索引被选择，键是NULL。
