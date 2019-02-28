@@ -98,3 +98,47 @@ AsyncTask抽象类同时实现了Runnable接口和Callable接口。AsyncTask子�
 ### 5. 计划任务
 在有些情况下，我们可能需要事先提交一个任务，这个任务并不是立即被执行的，而是要在指定的时间或者周期性地被执行，这种任务就被称为计划任务（ScheduledTask）。
 ExecutorService接口的子类ScheduledExecutorService接口定义了一组方法用于执行计划任务。ScheduledExecutorService接口的默认实现类是java.util.concurrent.ScheduledThreadPoolExecutor类，它是ThreadPoolExecutor的一个子类。
+```java
+	public interface ScheduledExecutorService extends ExecutorService {
+
+		/**
+		 *  延迟执行提交的任务。
+		 *	
+		 * @param  command/callable 任务   
+		 * @param delay     延迟多少时间
+		 * @param unit      时间单位
+  		 *
+		 *  @return  返回结果,可以通过返回结果获取执行任务的结果，执行中抛出的异常  同时可以通过返回结果取消任务
+		 */
+		public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit);
+		public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit);
+
+
+		/**
+		 * 周期性地执行提交的任务。
+		 * 	
+		 * @param command  任务
+		 * @param initialDelay 多长时间后第一次执行
+		 * @param period  每隔多少时间执行一次 (如果任务的执行时间为x, x > period, 那么任务的执行的周期将会不准确，有是为period, 又是大于 period)
+		 * @param unit    时间单位
+		 *
+		 * @return  返回结果，可以通过返回结果，取消任务 但是它无法获取计划任务的一次或者多次的执行结果
+		 */
+		public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit);
+
+		/**
+		 * 以一定的时间间隔
+		 * 	
+		 * @param command  任务
+		 * @param initialDelay 多长时间后第一次执行
+		 * @param delay   任务执行完成后，隔多长时间，在执行一次
+		 * @param unit    时间单位
+		 *
+		 * @return  返回结果，可以通过返回结果，取消任务 但是它无法获取计划任务的一次或者多次的执行结果
+		 */
+		public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit);
+	}
+```
+(1)在周期执行中,直接使用Runnable实例，那么我们是无法获取执行结果的，这是可以通过AsyncTask实例代替Runnable实例，然后在AsyncTask的onResult()方法对输出结果进行处理。
+
+(2)提交给ScheduledExecutorService执行的计划任务在其执行过程中如果抛出未捕获的异常（UncaughtException），那么该任务后续就不会再被执行。即使我们在创建ScheduledExecutorService实例的时候指定一个线程工厂，并使线程工厂为其创建的线程关联一个UncaughtExceptionHandler，当计划任务抛出未捕获异常的时候该UncaughtExceptionHandler也不会被ScheduledExecutorService实例调用。
