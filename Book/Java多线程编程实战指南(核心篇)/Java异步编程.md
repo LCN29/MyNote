@@ -142,3 +142,9 @@ ExecutorService接口的子类ScheduledExecutorService接口定义了一组方�
 (1)在周期执行中,直接使用Runnable实例，那么我们是无法获取执行结果的，这是可以通过AsyncTask实例代替Runnable实例，然后在AsyncTask的onResult()方法对输出结果进行处理。
 
 (2)提交给ScheduledExecutorService执行的计划任务在其执行过程中如果抛出未捕获的异常（UncaughtException），那么该任务后续就不会再被执行。即使我们在创建ScheduledExecutorService实例的时候指定一个线程工厂，并使线程工厂为其创建的线程关联一个UncaughtExceptionHandler，当计划任务抛出未捕获异常的时候该UncaughtExceptionHandler也不会被ScheduledExecutorService实例调用。
+
+(3)我们可以通过工具类Executors来获取想要的实现类
+```java
+public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize)
+public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory)
+```
