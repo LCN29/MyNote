@@ -10,6 +10,7 @@
 
 #### happen(s)- before
 换个角度来理解有序性这个概念——用可见性描述有序性:
+
 | Processor1     		| Processor2 				  |
 |  :-             		| :-         				  |
 |  X = 1; // S1  		|            				  |
