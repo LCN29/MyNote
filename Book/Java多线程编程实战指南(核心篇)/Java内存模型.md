@@ -22,10 +22,24 @@
 |   					|   r3 = Z; // L3             |
 
 X、Y、Z和ready为共享变量，r1、r2和r3为局部变量。
-假设Processor2读取到变量ready值时S1、S2、S3和S4的操作结果均已提交完毕，并且L2、L3不会与L1进行重排序, 那么此时S1、S2、S3和S4的操作结果对L1及其之后（程序顺序）的L2和L3来说都是可见的。因此，从L1、L2和L3的角度来看此时S1、S2、S3和S4就像是被Processor0上的线程依照程序顺序执行一样，即S1、S2、S3和S4对于L1、L2和L3来说是有序的。尽管实际上Processor1在执行S1、S2、S3和S4时可能进行指令重排序、内存重排序，但是只要在L1被执行的时候S1、S2、S3和S4的操作结果均已提交完毕，即这些操作的结果同时对L1可见，那么S1、S2、S3和S4在L1、L2和L3看来就是有序的。
+假设Processor2读取到变量ready值时S1、S2、S3和S4的操作结果均已提交完毕，并且L2、L3不会与L1进行重排序, 那么此时S1、S2、S3和S4的操作结果对L1及其之后（程序顺序）的L2和L3来说都是可见的。 因此，从L1、L2和L3的角度来看此时S1、S2、S3和S4就像是被Processor0上的线程依照程序顺序执行一样，即S1、S2、S3和S4对于L1、L2和L3来说是有序的。尽管实际上Processor1在执行S1、S2、S3和S4时可能进行指令重排序、内存重排序，但是只要在L1被执行的时候S1、S2、S3和S4的操作结果均已提交完毕，即这些操作的结果同时对L1可见，那么S1、S2、S3和S4在L1、L2和L3看来就是有序的。
 
-　　happens-before就是采用上述这种从可见性角度出发去描述有序性的。Java内存模型定义了一些动作(Action)。这些动作包括变量的读/写、锁的申请(lock)与释放(unlock)以及线程的启动(Thread.start()调用)和加入(Thread.join()调用)等。 假设动作A和动作B之间存在happens-before关系(happens-before relationship), 称之为A happens-before B,那么Java内存模型保证A的操作结果对B可见,即A的操作结果会在B被执行前提交(比如写入高速缓存或者主内存)。happens-before关系具有传递性(Transitivity),即如果A happens-before B,并且B happens-before C,那么有A happens-before C (后续使用"→"这个符号来表示happens-before关系, 比如A→B表示动作Ahappens-before动作B)。
+　　happens-before就是采用上述这种从可见性角度出发去描述有序性的。Java内存模型定义了一些动作(Action)。这些动作包括变量的读/写、锁的申请(lock)与释放(unlock)以及线程的启动(Thread.start()调用)和加入(Thread.join()调用)等。 假设动作A和动作B之间存在happens-before关系(happens-before relationship), 称之为A happens-before B,那么Java内存模型保证A的操作结果对B可见,即A的操作结果会在B被执行前提交(比如写入高速缓存或者主内存)。happens-before关系具有传递性(Transitivity),即如果A happens-before B,并且B happens-before C,那么有A happens-before C (后续使用"→"这个符号来表示happens-before关系, 比如A→B表示动作A happens-before动作B)。
 
 　　happens-before关系的传递性使得可见性保障具有累积的效果。 假设A、B、C和D四个动作之间存在这样的happens-before关系：A→B、B→C、C→D。 根据传递性, 我们还可以推导出这样的happens-before关系：A→D和B→D(当然, 还有A→C)。 对于D而言, 不仅仅C的结果对其可见, A的结果以及B的结果也都对D可见, 这就形成了可见性保障能够"累积"的效果, 
 
 　　如果一组动作({A1,A2,A3})中的每个动作与另外一组动作({B1,B2,B3})中的任意一个动作都具有happens-before关系, 那么我们可以称前一组动作与后一组动作之间存在happen-before关系, 记为{A1,A2,A3}→{B1,B2,B3}。 
+
+　　Java内存模型定义了一些关于happens-before关系的规则, 这些规则规定了两个动作在什么情况下具有happens-before关系。 其中常用的规则如下。 
+>1. 程序顺序规则(ProgramOrderRule)。 程序顺序规则意味着一个线程内任何一个动作的结果对程序顺序上该动作之后的其他动作都是可见的, 并且这些动作在该线程自身看来就像是完全依照程序顺序执行和提交的。 尽管如此, 只要这些动作之间不存在数据依赖关系, 那么Java虚拟机(JIT编译器)、处理器都可能对这些动作进行重排序, 只要这种重排序不违反程序顺序规则即可。 因此, 程序顺序上先后的两个动作A和B, 尽管它们之间存在happens-before关系, 但这并不意味着在时间上动作A必须先于动作B被执行。 由此可见, happens-before关系与时间上的先后关系并无必然的联系。 
+
+>2. 内部锁规则(MonitorLockRule)。 内部锁的释放(unlock)happens-before后续(Subsequent)每一个对该锁的申请(lock)。 该规则中的"释放"和"申请"必须是针对同一锁实例, 也就是说一个锁的释放与另外一个锁的申请之间并无happens-before关系;其次,所谓"后续"是指时间上的先后关系,即一个线程释放锁后另外一个线程再来申请这个锁的情况下,这两个线程的"释放"和"申请"之间才存在happens-before关系。(注：锁对排他性的保障仅限于临界区内的代码, 但是锁对可见性和有序性的保障却可以扩展到临界区之前。) 
+
+　　基本happens-before规则
+>1. volatile变量规则(Volatile Variable Rule)。 对一个volatile变量的写操作happens-before后续(Subsequent)每一个针对该变量的读操作。 
+>2. 线程启动规则(Thread Start Rule)。 调用一个线程的start方法happens-before被启动的这个线程中的任何一个动作。假设线程T1在执行过程中启动了线程T2, 即T1执行了T2.start(), 那么线程启动规则会保证T1在T2.start()调用前所执行的任何动作的结果对T2所执行的任何一个动作都是可见的, 并因此是有序的。 
+>3. 线程终止规则(Thread Termination Rule)。 一个线程中的任何一个动作都happens-before该线程的join方法的执行线程在join方法返回之后所执行的任意一个动作。 假设线程T1等待线程T2结束, 那么线程终止规则保证T2所执行的任何动作的结果对T1中程序顺序上在T2.join()调用之后的任何一个动作是可见的, 并因此是有序的。 
+
+
+#### 共享变量与性能
+　　在多个线程共享变量的情况下, 一个处理器对该变量进行更新会导致其他处理器上的高速缓存中存储的该变量的副本数据失效。 这使得这些处理器后续访问(包括读、写)该变量时会产生缓存未命中, 从而不利于程序的性能。 多个线程之间对共享变量的访问仅仅涉及读操作而没有涉及写操作, 或者这些线程之间不存在共享变量均有利于减少缓存未命中的频率。 
