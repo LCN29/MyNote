@@ -39,8 +39,7 @@
 | useColumnLabel |使用列标签, 而不是列名。 在这方面, 不同的驱动有不同的行为。 参考驱动文档或测试两种方法来决定你的驱动程序的行为如何| true/false | true|
 | useGeneratedKeys|允许JDBC支持生成的密钥。 兼容的驱动程序是必需的。 此设置强制生成的键被使用, 如果设置为true, —些驱动会不兼容性, 但仍然可以工作 | true/false | false|
 | autoMappingBehavior | 指定MyBatis的应如何自动映射列到字段/厲性。 NONE自动映射。 PARTIAL只会
-自动映射结果没有嵌套结果映射定义里面。 FULL会自动映射的结果映射任何复杂的(包含嵌套或其他)
-| NONE/PARTIAL/FULL| PARTIAL|
+自动映射结果没有嵌套结果映射定义里面。 FULL会自动映射的结果映射任何复杂的(包含嵌套或其他)| NONE/PARTIAL/FULL| PARTIAL|
 | defaultExecutorType |配置默认执行人。 SIMPLE执行人确实没有什么特别的。 REUSE执行器重用准备好的语句。 BATCH执行器重用语句和批处埋更新。 | SIMPLE/REUSE/BATCH|SIMPLE|
 | defaultStatementTimeout | 设置驱动程序等待一个数据库响应的秒数。 | 任意一个有正的整型 | 没有设置 (null)|
 | safeRovBoundsEnabled | 允许使用嵌套的语句RowBounds | true/false | false|
