@@ -9,4 +9,7 @@
 jmap -dump:format=b,file=文件名.hprof 进程Id
 
 
+# 将生成的hprof文件导入到mat(https://www.eclipse.org/mat/downloads.php)
+
+
 
