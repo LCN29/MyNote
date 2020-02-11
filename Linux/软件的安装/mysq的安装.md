@@ -49,12 +49,21 @@
 >>5. `把里面的/usr/local/mysql全部替换为/opt/mysql-5.7.22`
 
 ## 十，启动mysql
->1. `cd /opt/mysql-5.7.22`
->2. `bin/mysql -hlocalhost -uroot -p`
->3. `输入刚刚的临时密码`
->4. `set password=password('你的密码');`
->5. `grant all privileges on *.* to 'root'@'%' identified by '你的密码';`
->6. `flush privileges;`
+>1. `service mysql start`
+>2. `cd /opt/mysql-5.7.22`
+>3. `bin/mysql -hlocalhost -uroot -p`
+>4. `输入刚刚的临时密码`
+>5. `ALTER USER 'root'@'localhost' IDENTIFIED BY '你的密码';`
+>6. `grant all privileges on *.* to 'root'@'%' identified by '你的密码';`
+>7. `flush privileges;`
+
+eg:
+在 Mysql 8.0 以上给root 赋予 远程连接的权限的方式改变了
+>1. `CREATE USER 'root'@'%' IDENTIFIED BY '你的密码';`
+>2. `GRANT ALL ON *.* TO 'root'@'%';`
+>3. `ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '你的密码';`
+>4. `FLUSH PRIVILEGES;`
+
 
 ## 十一，开启端口
 >1. `firewall-cmd --zone=public --add-port=3306/tcp --permanent`
