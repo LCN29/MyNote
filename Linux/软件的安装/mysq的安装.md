@@ -7,8 +7,6 @@
 >2. `mkdir mysql`
 >3. `cd mysql`
 >4. `mkdir data log lock`
->5. `chown -R mysql .`
->6. `chgrp -R mysql .`
 (我把mysql的数据库文件和日志文件都存放到了/var/mysql下，程序的的安装选择了/opt)
 
 ## 三, 将文件转移到/opt，并重名为mysql-5.7.22
