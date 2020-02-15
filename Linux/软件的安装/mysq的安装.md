@@ -57,10 +57,13 @@
 
 eg:
 在 Mysql 8.0 以上给root 赋予 远程连接的权限的方式改变了
->1. `CREATE USER 'root'@'%' IDENTIFIED BY '你的密码';`
->2. `GRANT ALL ON *.* TO 'root'@'%';`
->3. `ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '你的密码';`
+>1. `USE mysql;`
+>2. `SELECT host, user, authentication_string, plugin FROM user;` 
+>3. `update user set host = '%' where user ='root';`
 >4. `FLUSH PRIVILEGES;`
+>5. `GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';`
+>6. `ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '你的密码';`
+>7. `FLUSH PRIVILEGES;` 
 
 
 ## 十一，开启端口
