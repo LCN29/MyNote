@@ -89,7 +89,7 @@ protected-mode no
 requirepass 你的密码
 # 将#requirepass foobared的注释去掉，将后面的foobared改为你的密码
 ```
->14. `mv redis redis_6379` （重命名配置文件）
+>14. `mv redis.conf redis_6379.conf` （重命名配置文件）
 >15. `cd /etc/init.d`
 >16. `vim redis_6379` (编辑脚本文件)
 ```shell
@@ -114,8 +114,7 @@ $CLIEXEC -a "你的redis密码" -p $REDISPORT shutdown(在中间添加 -a "你�
 # chkconfig: 2345 90 10
 # description: Redis is a persistent key-value database
 ```
-> `chkconfig redis_6379 on` 将Redis加入系统启动项
->3. 后面就可以通过`service redis_6379 start`和`service redis_6379 start`启动redis服务了
+> `chkconfig redis_6379 on` 将Redis加入系统启动项, 后面就可以通过`service redis_6379 start`和`service redis_6379 start`启动redis服务了
 
 # 六,开启端口
 >1. `firewall-cmd --permanent --zone=public --add-port=6379/tcp`
