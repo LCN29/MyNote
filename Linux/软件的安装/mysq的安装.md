@@ -42,7 +42,7 @@
 >4. `vim /etc/init.d/mysql`
 >>1. `basedir=/opt/mysql-5.7.22`
 >>2. `datadir=/var/mysql/data`
->>3. `lockdir='/var/mysql/lock/subsys'`
+>>3. `lockdir='/var/mysql/lock/subsys'` (这一步如果没必要的话, 就不要修改, 可能会出现找不到进程文件而启动失败)
 >>4. `把里面的/usr/local/mysql/data 全部替换为/var/mysql/data`
 >>5. `把里面的/usr/local/mysql全部替换为/opt/mysql-5.7.22`
 
