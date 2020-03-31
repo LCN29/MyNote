@@ -69,3 +69,19 @@ eg:
 ## 十一，开启端口
 >1. `firewall-cmd --zone=public --add-port=3306/tcp --permanent`
 >2. `firewall-cmd --reload`
+
+
+## 十二，配置文件
+在 /etc/ 下面创建一个 my.cnf 的配置文件
+```
+# the config arg can read this blog : https://www.cnblogs.com/sunmmi/articles/6809765.html
+
+[mysqld]
+port = 3306
+user = mysql
+basedir = /opt/software/mysql-8.0.19
+datadir = /opt/software/mysql-8.0.19/data
+pid-file = /opt/software/mysql-8.0.19/pid/mysql.pid
+log-error = /opt/software/mysql-8.0.19/logs/mysql_error.log
+```
+确保里面的文件夹和文件都有存在，如果启动失败优先检查对应的目录和文件是否存在
