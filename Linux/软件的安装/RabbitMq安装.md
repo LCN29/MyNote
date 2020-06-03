@@ -20,10 +20,10 @@
 >3. 在文件的最底部添加如下内容
 ```shell
 # erlang
-export ERL_HOME=/opt/erlang-20.3
+ERL_HOME=/opt/erlang-20.3
 
 PATH=.:$PATH:$ERL_HOME/bin
-export PATH=.:$PATH:$ERL_HOME/bin
+export PATH=.:$PATH
 ```
 >4. `esc`(退出编辑模式,右下角的`insert`标志消失)
 >5. `shift+;`(右下角会出现`:`标志)
