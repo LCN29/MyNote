@@ -14,6 +14,8 @@
 >4. `./configure --prefix=你打算安装的路径`(设置erlang安装的路径，我的是安装在/opt/erlang-20.3)
 >5. `make && make install` (编译安装)
 
+补充说明一下, 不同版本的 RabbitMq 需要的 erlang 的版本存在差异, 具体的 erlang 对应的版本可以查看 [这个](https://www.rabbitmq.com/which-erlang.html#compatibility-matrix)
+
 ## 四, 配置 erlang 的环境变量
 >1. `vim /etc/profile` (打开profile文件，此处的安装在全局的环境变量里面的，既无论哪个用户登录了，都能操作erlang，如果只想把erlang安装在当前用户的话，请使用`vim ~/.bash_profile`)
 >2. `i` (进入编辑/etc/profile文件模式,右下角会显示 `insert`)
@@ -45,10 +47,10 @@ export PATH=.:$PATH
 >2. 在文件的最底部添加如下内容
 ```shell
 # rabbitmq
-export RABBITMQ_SERVER=/opt/rabbitmq-3.7.4
+RABBITMQ_HOME=/opt/rabbitmq-3.7.4
 
 # 此处是在原来的Path路径后面追加
-PATH=一开始的内容:$RABBITMQ_SERVER/sbin
+PATH=一开始的内容:$RABBITMQ_HOME/sbin
 ```
 >3. `source /etc/profile `
 >4. `rabbitmq-server -detached` （后台启动服务）
