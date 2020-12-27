@@ -27,8 +27,8 @@
 2. `ctrl + R` 正常的 run 程序
 3. `option + enter` 为变量进行声明
 4. `ctrl + I` 接口实现方法生成
-5.  `command + option + L` 代码格式化
-6. ``
-7. ``
+5. `command + option + L` 代码格式化
+6. `control + enter` 生成 get/set 方法
+7. `option + 方向键上` 递进式的选择内容(相当于 window 里面的 control + w)
 
 
