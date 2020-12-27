@@ -3,7 +3,9 @@
 
 1. `command + N`  可以新建文件/文件夹
 2. `command + W`  关闭当前的窗口
-3. `commsnf + shift + [/ command + shift + ]` 窗口内的 tab 左右切换
+3. `command + shift + [ / command + shift + ]` 窗口内的 tab 左右切换
+4. `command + B` 跳转到方法的调用方/跳转到方法定义的地方
+5. `command + option + B` 跳转到方法的具体的实现逻辑
 
 
 # 搜索相关的快捷键
