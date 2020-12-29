@@ -30,5 +30,8 @@
 5. `command + option + L` 代码格式化
 6. `control + enter` 生成 get/set 方法
 7. `option + 方向键上` 递进式的选择内容(相当于 window 里面的 control + w)
+8. `command + F12` 查询当前类中的方法
+9. `option + command + U` 单词大小写转换
+10.
 
 
